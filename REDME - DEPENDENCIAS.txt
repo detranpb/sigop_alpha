@@ -1,0 +1,3 @@
+npm install vue-knob-control -S ===>>> https://www.npmjs.com/package/vue-knob-control
+
+3.100

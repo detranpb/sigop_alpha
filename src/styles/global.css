@@ -1,0 +1,53 @@
+/* Paleta de cores */
+:root {
+    --color-background:#F3F3F3;
+    --color-background-nav:#044a5c;
+    --color-background-home:#6d6e6e;
+    --color-text-light:#EDEDED;
+    --color-text-title:#001866;
+    --color-text-dark:#1f1e1e;
+}
+
+*{
+	padding:0;
+	margin:0;
+	box-sizing: border-box;
+	font-family: sans-serif; /* Pega direto do PC */
+}
+
+html,
+body{
+	background-color: var(--color-background); 
+}
+
+a {
+	text-decoration: none;
+	transition: 0.2s opacity;
+}
+
+a:hover 	    {
+	opacity:0.8;
+}
+
+.container{
+    width:100%;
+}
+
+main{
+    width:100%;
+    height: calc(100vh - 120px); /* OBS: O calc só funciona se tiver espaços brancos antes e após o - */
+    display:flex;
+    flex-direction: column;
+}
+
+h1{
+    color: var(--color-text-title);
+    margin:40px 0;
+    font-size: 30px;
+}
+
+.titulo-paginas {
+    font-size: 25px;
+    color: rgb(9, 19, 1);
+    font-weight: bold;
+}
