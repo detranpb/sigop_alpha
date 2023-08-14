@@ -29,7 +29,8 @@ Vue.use( IconsPlugin )
 Vue.prototype.$appName = 'My App'
 Vue.prototype.$TOTAL_AGENTES_POR_OPERACAO = 2 // TODO: IMPOR LIMITE !!!!!!
 
-Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
+//Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
+Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
 
 /* --------------------- FORT AWESOME ICONS -----------------------*/
 /* import the fontawesome core */

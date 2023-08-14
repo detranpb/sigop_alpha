@@ -553,7 +553,7 @@
                     auxObj    =  {   
                           idOperacao : this.idOperacao, 
                           dataDevolucao : "0000-00-00",
-                          horaDevolucao : "0000-00-00",
+                          horaDevolucao : "00:00:00",
                           idEquipamento : this.equipamentos[i].idData,
                           isAvariado    : null,
                           tipoEquipamento : null,
