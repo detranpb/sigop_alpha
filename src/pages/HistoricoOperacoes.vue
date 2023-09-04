@@ -46,11 +46,11 @@
             </div>
       </div>
       <div v-if="isTableOperacoesVisible" class="tabela-container" id="LISTA_OPERACOES_ID">
-  <div class="content">
-    <label class="label"><b>Operações Disponíveis</b></label>
-    <b-table :items="tableData" :fields="tableFields" striped hover selectable @row-clicked="handleRowClicked"></b-table>
-  </div>
-</div>
+          <div class="content">
+              <label class="label"><b>Operações Disponíveis</b></label>
+              <b-table :items="tableData" :fields="tableFields" striped hover selectable @row-clicked="handleRowClicked"></b-table>
+          </div>
+      </div>
 
       <div id="OPERACOES_DETALHES_ID" v-if="isDetalharOperacoesOn">
       <b-tabs card>
@@ -106,7 +106,7 @@
 
   export default 
   { 
-    components: {
+    components:       {
       FormOperacoes,
       MyLoadingOverlay
     },
@@ -129,7 +129,6 @@
           this.isEditable = newValue;
           this.$store.commit('setIsPageEditable', this.isEditable );
 
-          console.log("Call set form...");
           this.setFormEditable();
           // var str = this.$store.state.isPageEditable;
           // console.log( "HISTORICO | edit? " + str );
@@ -137,15 +136,17 @@
     },
     created()   
     { 
+        this.authenticationControl();
+
         if ( this.$route.name == "addOperacoes" ) {
              this.isAddOperacoesPage = true;
         } else  {
             this.isAddOperacoesPage = false;
         }
-        console.log( "-FormOperacoes || isAddOperacoes? " + this.isAddOperacoesPage );
+        // console.log( "-FormOperacoes || isAddOperacoes? " + this.isAddOperacoesPage );
         this.$store.commit( 'setIsPageEditable', this.isAddOperacoesPage );
-        var str = this.$store.state.isPageEditable;
-        console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
+        // var str = this.$store.state.isPageEditable;
+        // console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
 
         this.$store.commit('setIsPageEditable', false );
         // console.log( "teste >>> " + JSON.stringify( this.LISTA_LABELS_AGENTES ) );
@@ -201,36 +202,35 @@
       handleRowClicked( item, index, event ) 
       {
           this.selectedRowId = item.id;
-          console.log( JSON.stringify( item ) + " -- " + index + " -- " + event );
+          var x = "" + event+index+"s";
+          console.log( x );
           this.buscaDetalhesOperacaoByID( item.id );
       },
       selecionaFiltro( option )       {
           this.filtroSelecionado = option;
-          console.log( "FILTRO = " + this.filtroSelecionado + '|| tipo = ' + typeof this.filtroSelecionado);
+          // console.log( "FILTRO = " + this.filtroSelecionado + '|| tipo = ' + typeof this.filtroSelecionado);
       },
       /* Chama no filho,FormOperacoes, o metodo setFormEditable()*/
-      setFormEditable()   {
+      setFormEditable()               {
           this.$refs.setFormEditableRef.toggleFormDisabled(); // Call the child method
       },
-      handleCloseModal()  {
+      handleCloseModal()              {
         this.modalIsVisible = false;  
-        console.log("Close ... ");
       },
-      handleAcceptModal() {
+      handleAcceptModal()             {
           // console.log("Accept ... ");
           this.modalIsVisible = false;
       },
-      handleRejectModal() {
+      handleRejectModal()             {
           // console.log("Reject ... ");
           this.modalIsVisible = false;
       },
-      closeTab(x) {
-        for ( let i = 0; i < this.tabs.length; i++ ) 
-        {
-          if ( this.tabs[i] === x )
-               this.tabs.splice( i, 1 )
-        }
-        this.tabCounter--;
+      closeTab( x )                   {
+          for ( let i = 0; i < this.tabs.length; i++ ) {
+                if ( this.tabs[i] === x )
+                     this.tabs.splice( i, 1 )
+          }
+          this.tabCounter--;
       },
       newTab()              
       {
@@ -248,45 +248,64 @@
           // Ativa a aba (tab) correspondente
           this.$refs.tabs.activateTab( tabIndex );
       },
+      replaceSubstrings( STR )
+      {
+          const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
+          const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
+          for ( let i = 0; i < V1.length; i++ )
+                STR = STR.split( V1[i] ).join(V2[i] );
+          return STR;
+      },
+      authenticationControl()   {
+        var isAuth = this.$store.state.isAutenticated;
+        console.log( "- Auth? " + isAuth );
+        if ( !isAuth )          {
+              console.log("indo p login...");
+              this.$router.push('/login');
+        }
+      },
       buscarOperacoes()  
       {
-        console.log( "-buscarOperacoes ==>> " + JSON.stringify( this.filtrosValues ) + ", " + this.filtroSelecionado );
+        //console.log( "-buscarOperacoes ==>> " + JSON.stringify( this.filtrosValues ) + ", " + this.filtroSelecionado );
         var sendData    =    {
           dados: {
               entidade: 'operacao',
               operacao: 'consultar',
-              objeto: { 
-                filtro: true
-              }
+              objeto: {   filtro: true  }
           }
         };
-        if ( this.filtroSelecionado == 'data' )   {
+        if ( this.filtroSelecionado == 'data' )       {
              sendData.dados.objeto.data = '' + this.filtrosValues.dataOp;
-             console.log( "-- SEND data ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
-        } else if ( this.filtroSelecionado == 'id' ) {
+             //console.log( "-- SEND data ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+        } else if ( this.filtroSelecionado == 'id' )  {
              sendData.dados.objeto.id   = '' + this.filtrosValues.id;
-             console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+             //console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         }
 
       axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
             .then( response =>    {
                    var dados = response.data; // -->>> Isso chama o watcher !
-                   console.log( "Resposta API = " + JSON.stringify( response.data ) + " || " + JSON.stringify( dados.data ).replace( /\\/g, "" ) );
+                   //console.log( "Resposta API = " + JSON.stringify( response.data ) + " || " + JSON.stringify( dados.data ).replace( /\\/g, "" ) );
                    
-                   if ( dados.data == null ) {
+                   if ( dados.data == null )        {
                         this.modalIsVisible = true;
                         this.modalMessage = "Nenhuma operação encontrada.";
                    }
-
                    if ( dados.data.length > 0 )
                         this.isTableOperacoesVisible = true;
 
                    var numOperacoes = dados.data.length;
-                   for ( var i=0; i<numOperacoes; i++ )    {
-                        this.tableData[i].id = dados.data[i].id; 
-                        this.tableData[i].nomeOperacao = dados.data[i].nomeOperacao;
-                        this.tableData[i].data = dados.data[i].data;
-                        this.tableData[i].matriculaResponsavel = dados.data[i].matriculaResponsavel;
+                   for ( var i=0; i<numOperacoes; i++ )                
+                   {
+                         var strNomeOp = dados.data[i].nomeOperacao;
+                         //console.log( "Nome Op. = " + strNomeOp );
+                         var novoNome = this.replaceSubstrings( strNomeOp );
+                         //console.log( "-Nova St? " + novoNome );
+
+                         this.tableData[ i ].id = dados.data[ i ].id; 
+                         this.tableData[ i ].nomeOperacao = novoNome;
+                         this.tableData[ i ].data = dados.data[ i ].data;
+                         this.tableData[ i ].matriculaResponsavel = dados.data[ i ].matriculaResponsavel;
                    }
                    this.tableData.splice(numOperacoes, this.tableData.length - numOperacoes);
             })
@@ -311,14 +330,14 @@
           }
         }; 
         sendData.dados.objeto.id = idOperacao;
-        console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+        //console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         this.isDetalharOperacoesOn = true;
 
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
               .then( response => {
                     // console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
                     // this.responseData = response.data; // 
-                    console.log( "Retorno type = " + typeof response.data );
+                    // console.log( "Retorno type = " + typeof response.data );
                     this.responseOperacoesData = response.data; // -->>> Isso chama o watcher !
                     // console.log("Response API || Dados Busca ==> " +  JSON.stringify(  this.responseOperacoesData ) );
 
@@ -332,7 +351,7 @@
                          this.modalIsVisible = true;
                          this.modalMessage = msg;
                     } 
-                    console.log("BUSCA || Response API ==> " +  JSON.stringify(  this.responseOperacoesData.data ) );
+                    // console.log("BUSCA || Response API ==> " +  JSON.stringify(  this.responseOperacoesData.data ) );
               })
               .catch(error => {
                     this.error = error.message;

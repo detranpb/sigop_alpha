@@ -164,6 +164,7 @@ export default              {
   created() 
   {
       // console.log( JSON.stringify( this.MATRICULAS_VALIDAS ) );
+      this.authenticationControl();
       this.getListaAgentes();
 
         if ( this.$route.name == "addOperacoes" ) {
@@ -187,10 +188,11 @@ export default              {
   },
   watch:        {
     
+    // -- Chamado em Histórico Operações, quando o usuário selectiona na tabela, para detalhar os dados
     dadosOperacoes( newVal ) 
     {
         this.dadosOperacoesDetalhes = newVal;
-        //console.log( "--xxx FormOperacoes || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
+        // console.log( "--xxx FormOperacoes || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
         //console.log(" === ");
         this.setDadosGerais( this.dadosOperacoesDetalhes.dadosOperacao );
         // console.log( "--FORM || DADOS LISTA ==>> " + JSON.stringify( this.dadosOperacoesDetalhes.lista ).replace( /\\/g, "" ) );
@@ -293,6 +295,16 @@ mounted() {
         // console.log( "X[ " + this.ID + "] = " + updatedData );
         // console.log( "FormOperacoes[0] = " + updatedData.usuMatricula + " || " + equipamentosPorAgente[0] );
     },*/
+    
+    authenticationControl()   
+    {
+        var isAuth = this.$store.state.isAutenticated;
+        console.log( "- Auth? " + isAuth );
+        if ( !isAuth )          {
+              console.log("indo p login...");
+              this.$router.push('/login');
+        }
+    },
     setFormEditable()     {
         this.formDisabled = this.IS_PAGE_EDITABLE;
     },
@@ -362,6 +374,13 @@ mounted() {
           console.error(error);
         });
     },
+    replaceSubstrings( STR )  {
+          const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
+          const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
+          for ( let i = 0; i < V1.length; i++ )
+                STR = STR.split( V1[i] ).join(V2[i] );
+          return STR;
+    },
     toggleFormDisabled() {
       this.formDisabled = !this.formDisabled;
     },
@@ -369,12 +388,12 @@ mounted() {
     /* FUNÇÃO USADA PELO COMPONENTE HistoricoOperacoes */
     setDadosGerais( obj )  {
 
-        console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
+        // console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
         this.idValue = obj.id;
         // console.log( "this.idValue ==>> " + this.idValue );
         this.dadosGeraisOperacao.bairro               = obj.bairro;        
         this.dadosGeraisOperacao.data                 = obj.data;          
-        this.dadosGeraisOperacao.nomeOperacao         = obj.nomeOperacao;  
+        this.dadosGeraisOperacao.nomeOperacao         = this.replaceSubstrings( obj.nomeOperacao );  
         this.dadosGeraisOperacao.matriculaResponsavel = obj.matriculaResponsavel; 
         this.dadosGeraisOperacao.observacoes          = obj.observacoes;
         this.dadosGeraisOperacao.kmIni                = obj.kmIni;
@@ -469,7 +488,7 @@ mounted() {
         if ( this.isAddOperacoesPage == false ) 
              sendData.dados.objeto.id = this.idValue;
 
-        console.log( "-- SALVAR ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+        // console.log( "-- SALVAR ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
              .then( response => {
@@ -480,18 +499,18 @@ mounted() {
               if ( responseStr.charAt(0) === '"' && responseStr.charAt(responseStr.length - 1) === '"' )
                    responseStr = responseStr.substring( 1, responseStr.length - 1 ); // Remove the double quotes*/
               
-              console.log( "Response JSON ===>>> " + response.data + " - " + typeof response.data );
+              // console.log( "Response JSON ===>>> " + response.data + " - " + typeof response.data );
               //const strData = JSON.stringify( response.data ).replace( /\\/g, "" );
               //var respObj = response.data;
 
               if ( ( typeof response.data ) == 'object' )  {
                     var data = response.data;
-                    console.log('-DATA == ' + JSON.stringify(  data )  );
-                    console.log( "MSG = " + data.message + "|| code= " + data.code );
+                    /* console.log('-DATA == ' + JSON.stringify(  data )  );
+                    console.log( "MSG = " + data.message + "|| code= " + data.code );**/
 
                     if ( data.code == 0 )   
                     {
-                         console.log( "ID = " + data.data.id );
+                         // console.log( "ID = " + data.data.id );
                          this.idValue = data.data.id;
                          this.modalIsVisible = true;
                          this.modalMessage = "Operação salva com sucesso! (ID = " + this.idValue + ")";
@@ -515,9 +534,10 @@ mounted() {
     },
     openDadosGerais()
     {
-      // if ( this.IS_PAGE_EDITABLE )
-      // this.getMunicipios();
-      console.log("oi");
+      if ( this.IS_PAGE_EDITABLE )
+       this.getMunicipios();
+      // console.log("oi");
+      //var x = " ";
     },
     getMunicipios()               {
           const sendData = {
@@ -530,11 +550,11 @@ mounted() {
             }
           };
           // {"dados":{"entidade":"municipios","operacao":"consultar","objeto":{"id":"1"}}}
-          console.log("sending = " + JSON.stringify( sendData , null, 2) );
+          // console.log("sending = " + JSON.stringify( sendData , null, 2) );
 
           axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
             .then(response => {
-              console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
+              // console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
               this.responseData = response.data; // -->>> Isso chama o watcher !
               // console.log("Dados retornados = " +  this.responseData.dados );
             })
@@ -547,24 +567,20 @@ mounted() {
 </script>
 
 <style>
-.dados-operacao     {
-  width: 100%;
-  background-color: rgb(241, 236, 236);
+.dados-operacao            {
+    width: 100%;
+    background-color: rgb(241, 236, 236);
 }
-
-.table-container    {
-  margin: 10px;
+.table-container           {
+    margin: 10px;
 }
-
-table.editable-table {
-  margin-top: 10px;
-  font-size: small;
+table.editable-table       {
+    margin-top: 10px;
+    font-size: small;
 }
-
-table.editable-table td {
-  vertical-align: middle;
+table.editable-table td    {
+    vertical-align: middle;
 }
-
 .editable-table .data-cell {
   padding: 8px;
   vertical-align: middle;
@@ -574,52 +590,52 @@ table.editable-table td {
   width: 50px;
 }
 
-.remove-icon {
+.remove-icon      {
   color: red;
   cursor: pointer;
   font-size: 20px;
 }
 
-.edit-icon {
+.edit-icon        {
   color: rgb(4, 83, 158);
   cursor: pointer;
   font-size: 20px;
 }
 
-.name-col {
+.name-col          {
   width: 120px;
 }
 
-.department-col {
+.department-col    {
   width: 150px;
 }
 
-.age-col {
+.age-col           {
   width: 100px;
 }
 
-.date-col {
+.date-col          {
   width: 200px;
 }
 
-.is-active-col {
+.is-active-col     {
   width: 100px;
 }
 
-.table-centralizer {
+.table-centralizer    {
   display: flex;
   justify-content: center; 
   align-items: center;
 }
-.btn-add {
+.btn-add              {
     margin-top: 20px;
 } 
-.titulo-operacao {
+.titulo-operacao      {
   color: rgb(4, 64, 104);
   font-size: 15px;
   font-weight: bold;
 }
-.legenda-tabela {
+.legenda-tabela            {
   color: rgb(5, 76, 104);
   font-size: 14px;
   font-weight: bold;

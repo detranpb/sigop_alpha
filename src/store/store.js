@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-Vue.use(Vuex);
+Vue.use( Vuex );
 
 const store = new Vuex.Store( {
   state:      {
@@ -10,10 +10,10 @@ const store = new Vuex.Store( {
        sempre setado no created() de cada componente
        */
     isPageEditable: -1, 
-    
+    isAutenticated: false,
     user: {
         nome:null,
-        sobrenome: "x",
+        sobrenome: null,
         matricula: null,
         cpf: null,
     },
@@ -76,23 +76,26 @@ const store = new Vuex.Store( {
   },
   mutations:  {
 
-    setEquipsSelecionadosIDs( state , data )    {
+    setEquipsSelecionadosIDs( state , data )  {
         state.equipsSelecionadosIDs = data;
     },
-    setIsPageEditable( state , data )           {
+    setIsPageEditable( state , data )   {
         state.isPageEditable = data;
         // console.log( "No Mutation || isPageEditable " + state );
     },
-    setUser( state , data )                     {
+    setIsAutenticated( state , data )   {
+      state.isAutenticated = data;
+      console.log( "No Mutation || isAutenticated " + state );
+    },
+    setUser( state , data )             {
         state.user = data;
         console.log( "Mutation SET USER ===>>> " + JSON.stringify( state.user ) );
     },
     setListaAgentes( state , data ) 
     {
       state.listaAgentes = data;
-      /* console.log( "Lista Agentes !! = " + state );
-      console.log( state.listaAgentes[0].nome + " - " +
-                   state.listaAgentes[0].matricula );*/
+      /***** console.log( "Lista Agentes !! = " + state );
+      console.log( state.listaAgentes[0].nome + " - " + state.listaAgentes[0].matricula ); *****/
       
       for( var i=0; i<state.listaAgentes.length; i++ ) 
       {
@@ -104,7 +107,7 @@ const store = new Vuex.Store( {
   },
   actions: {
     updateMessage({ commit }, newMessage) {
-      commit('setMessage', newMessage);
+         commit('setMessage', newMessage);
     }
   }
 });

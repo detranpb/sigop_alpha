@@ -230,8 +230,8 @@
           this.usuMatricula[index] = value;
       },
       handleKeyDown(event)                  {
-          const value = event.target.value;
-          console.log( "AppAcordion || matri = " + value );
+          //const value = event.target.value;
+          //( "AppAcordion || matri = " + value );
           if ( !this.isAddOperacoesPage )    {
                 event.preventDefault();
 
@@ -241,15 +241,15 @@
           }
       },
       handleCloseModal()  {
-          console.log("Close ... ");
+          //console.log("Close ... ");
           this.modalIsVisible = false;
       },
       handleAcceptModal() {
-          console.log("Accept ... ");
+          //console.log("Accept ... ");
           this.modalIsVisible = false;
       },
       handleRejectModal() {
-          console.log("Reject ... ");
+          //console.log("Reject ... ");
           this.modalIsVisible = false;
       },
       getTabelasPorAgentes( index )
@@ -293,7 +293,8 @@
        * */  
       handleDataUpdate( status, index, usuMatricula ) 
       { 
-          console.log( "STATUS >>> " + status + " i= " + index + "|| matri = " + usuMatricula[ index ] );
+          // console.log( "STATUS >>> " + status + " i= " + index + "|| matri = " + usuMatricula[ index ] );
+          console.log( usuMatricula[ index ] );
           this.agentesHasSavedBD[ index ] = status;
       },
 
@@ -335,8 +336,8 @@
           const isValid = this.agentesLabelBD.some(a => a === userInput );
           this.inputMatriculasAtivas[ indexMatricula ] = userInput;
 
-          console.log("Valida agente!! " + userInput );
-          console.log( JSON.stringify( this.agentesHasSavedBD ) );
+          //console.log("Valida agente!! " + userInput );
+          //console.log( JSON.stringify( this.agentesHasSavedBD ) );
           if ( !isValid )   {
               this.modalIsVisible = true;
               this.modalMessage = "Matrícula/Agente inválida.";
@@ -361,8 +362,7 @@
               operacao: 'consultar'
           }
       };
-      console.log( "SEND >>> " + JSON.stringify( sendData ));
-
+      //console.log( "SEND >>> " + JSON.stringify( sendData ));
 
       try {
           var response = await axios.post( this.$SERVICES_ENDPOINT_URL , sendData );

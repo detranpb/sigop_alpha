@@ -1,7 +1,8 @@
 <template>
 <main>
     
-    <h4 style="margin: 15px;" class="card-title text-center titulo-paginas"> Histórico de Operações </h4> 
+    <h4 style="margin: 15px;" class="card-title text-center titulo-paginas"> Histórico de Operações </h4>
+    <h3 style="margin: 15px; font-size: 18px; color: red;" class="card-title text-center"> Página em construção ... </h3> 
 
     <div class="container-historico">
             <div id="FILTROS_ID" style="margin-top: 10px;">

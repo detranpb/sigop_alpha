@@ -6,6 +6,7 @@
     --color-text-light:#EDEDED;
     --color-text-title:#001866;
     --color-text-dark:#1f1e1e;
+    --modal-color:var(--color-background-home);
 }
 
 *{
@@ -16,38 +17,42 @@
 }
 
 html,
-body{
+body    {
 	background-color: var(--color-background); 
 }
 
-a {
+a       {
 	text-decoration: none;
 	transition: 0.2s opacity;
 }
 
-a:hover 	    {
+a:hover 	        {
 	opacity:0.8;
 }
 
-.container{
+.container          {
     width:100%;
 }
 
-main{
+main                {
     width:100%;
     height: calc(100vh - 120px); /* OBS: O calc só funciona se tiver espaços brancos antes e após o - */
     display:flex;
     flex-direction: column;
 }
 
-h1{
+h1                  {
     color: var(--color-text-title);
     margin:40px 0;
     font-size: 30px;
 }
 
-.titulo-paginas {
+.titulo-paginas     {
     font-size: 25px;
     color: rgb(9, 19, 1);
     font-weight: bold;
+}
+
+body .modal-content     {
+    background-color: rgb(227, 240, 243) !important;
 }

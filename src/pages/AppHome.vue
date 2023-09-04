@@ -28,17 +28,32 @@ export default
   },
   created()  
   {   
+      /*var isAuth = this.$store.state.isAutenticated;
+      console.log( "- Auth? " + isAuth );
+      if ( !isAuth )          {
+            console.log("indo p login...");
+            this.$router.push('/login');
+      }*/
+      this.authenticationControl();
       this.getListaAgentes();
       // console.log( "AppHome =>> " + JSON.stringify( this.listaAgentes ) );
   }, 
   computed: {
-    LISTA_AGENTES()      {
+    LISTA_AGENTES()             {
         return this.$store.state.listaAgentes;
     }
   },
   methods: {
-    showModal() {
-      this.modalIsVisible = true;
+    showModal()                 {
+        this.modalIsVisible = true;
+    },
+    authenticationControl()     {
+        var isAuth = this.$store.state.isAutenticated;
+        console.log( "- Auth? " + isAuth );
+        if ( !isAuth )          {
+              console.log("indo p login...");
+              this.$router.push('/login');
+        }
     },
     getListaAgentes() 
     {

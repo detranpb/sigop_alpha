@@ -8,12 +8,11 @@ import KnobControl from 'vue-knob-control'
 
 Vue.use( KnobControl )
 Vue.component('my-modal', MyModal);
-
 Vue.use( store );
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
-console.log(Vue.version);
+console.log( Vue.version );
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
@@ -28,32 +27,33 @@ Vue.use( IconsPlugin )
 // -------- Constantes da Aplicação --------
 Vue.prototype.$appName = 'My App'
 Vue.prototype.$TOTAL_AGENTES_POR_OPERACAO = 2 // TODO: IMPOR LIMITE !!!!!!
-
-//Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
 Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
 
 /* --------------------- FORT AWESOME ICONS -----------------------*/
-/* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-free/css/all.css'
-/* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-/* import specific icons */
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faSignOutAlt, faPlus, faSearch, faTimeline, faChartBar, faSort, faTrashAlt, faDatabase, faLock } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add(faUserSecret)
+library.add( faUserSecret )
+library.add( faSignOutAlt )
+library.add(  faPlus  )
+library.add( faSearch )
+library.add( faTimeline )
+library.add( faChartBar )
+library.add( faSort )
+library.add( faTrashAlt )
+library.add( faDatabase )
+library.add( faLock )
+
 /* add font awesome icon component */
-Vue.use('font-awesome-icon', FontAwesomeIcon)
-
-
-
+Vue.use( 'font-awesome-icon', FontAwesomeIcon )
 Vue.config.productionTip = false
-
 new Vue({
-  render: h => h(App),
-  router,
-  store,
+    render: h => h(App),
+    router,
+    store,
 }).$mount('#app')
 
 

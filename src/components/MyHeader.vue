@@ -9,7 +9,7 @@
 			</div>
 			
 			<div class="mx-auto nome-app">
-				Sistema de Gestão Operacional de Policiamento
+				Sistema de Gestão Operacional de Policiamento (SIGOP) 
 			</div>
 
 			<div class="header-left-comps d-flex justify-content-end align-items-center">
@@ -20,7 +20,7 @@
 					{{ USER_LASTNAME  }} <br>
 					{{ USER_MATRICULA }} <br>
 					<i class="fas fa-sign-out-alt"></i>
-					<a href="/">Sair</a>
+					<a href="index.html#/login"> Sair </a>
 				</div>
 			</div>
 		</nav>
@@ -31,18 +31,17 @@
 			
 			<div id="menu-items">
 				<ul>
-					<li><a href="/add-operacoes"> 
+					<li><a href="index.html#/add-operacoes"> 
 						<i class="fas fa-plus"></i>  Cadastra Operações </a>
 					</li>
-					<li><a href="/historico-operacoes"> 
+					<li><a href="index.html#/historico-operacoes"> 
 						<i class="fas fa-search"></i> Histórico de Operações </a>
 					</li>
-					<li><a href="/historico-equipamentos"> 
+					<li><a href="index.html#/historico-equipamentos"> 
 						<i class="fas fa-timeline"></i> Histórico de Equipamentos </a>
 					</li>
-					
-					<li><a href="/relatorios-operacoes"> 
-						<i class="fas fa-chart-bar"></i> Relatórios Gerais </a>
+					<li>
+						<i class="fas fa-chart-bar"></i> Relatórios Gerais
 					</li>
 				</ul>
 			</div>
@@ -68,18 +67,30 @@ export default 						{
 		showButtonAndAvatar() 		{
 			return !( this.$route.name === 'appLogin' ) 
 		},
-		USER_FIRSTNAME()	  		{
-			//-------- Local --------
+
+		/** USER_FIRSTNAME - Leitura de propriedade store definida no AppLogin,
+		 *  logo após carregar do BD os dados do user. **/
+		USER_FIRSTNAME()	  		
+		{
+			/** var nome = ( this.$store.state.user.nome ).toUpperCase();
+			console.log(" --> User Nome = " + nome );
+			return nome;**/
 			const user = localStorage.getItem('user');
-			// console.log(" --> User? = " + JSON.parse( user ).nome );
-			console.log(" --> User? = " + JSON.parse( user ).nome );
-			return ( JSON.parse( user ).nome ).toUpperCase();
-			// return ( this.$store.state.user.nome ).toUpperCase();
+			// console.log( "Load sobrenome ==>> " + JSON.parse(user).sobrenome );
+			if (user) {
+				return (JSON.parse(user).nome).toUpperCase();
+			} else { return ''; }
 		},
 		USER_LASTNAME()		  		{
+			/** var sobrenome = ( this.$store.state.user.sobrenome ).toUpperCase();
+			console.log(" --> Sobrenome = " + sobrenome );
+			return sobrenome;**/
+			
 			const user = localStorage.getItem('user');
-			console.log(" --> User? = " + JSON.parse( user ).sobrenome );
-			return ( JSON.parse( user ).sobrenome ).toUpperCase();
+			// console.log( "Load nome ==>> " + JSON.parse(user).nome );
+			if (user) {
+				return (JSON.parse(user).sobrenome).toUpperCase();
+			} else { return ''; }
 		},
 		/* USER_LASTNAME_OLD()		  		{
 			console.log( this.$route.name + ' || Last Name ==>> ' + this.$store.state.user.nome );

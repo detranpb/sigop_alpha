@@ -1,6 +1,6 @@
 <template>
 <main>
-    <AppTimeline></AppTimeline>
+    <AppTimeline> </AppTimeline>
 </main>
 </template>
 
@@ -8,9 +8,25 @@
   import AppTimeline  from '@/components/AppTimeline';
   export default
   {
-  components: {
-        AppTimeline
-   }
+  components:         {
+      AppTimeline
+  },
+  created()           {
+      this.authenticationControl();
+  },
+  methods:            {
+    showModal()                 {
+        this.modalIsVisible = true;
+    },
+    authenticationControl()     {
+        var isAuth = this.$store.state.isAutenticated;
+        console.log( "- Auth? " + isAuth );
+        if ( !isAuth )          {
+              console.log("indo p login...");
+              this.$router.push('/login');
+        }
+    }
+  }
 }
 </script>
 

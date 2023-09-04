@@ -143,7 +143,8 @@
   import emailjs from '@emailjs/browser';
   import axios from 'axios';
   import MyModal from '@/components/MyModal.vue';
-  
+  //import authStore from '@/store/auth'; // Import your authentication store
+
   export default {
     components: {
       MyModal
@@ -184,10 +185,16 @@
              return this.isSenhaVisivel ? 'text' : 'password';
         },
     },
+    created()   
+    {
+      // Reseta status de autenticação
+      const isAuth = false;
+      this.$store.commit( 'setIsAutenticated', isAuth );
+    },
     methods:      {
       openCriaSenhaModal( flag )          
       {
-          console.log( "T => " + this.modSenhaVisible );
+          //console.log( "T => " + this.modSenhaVisible );
           if ( flag )   
           {
               this.formPrimeiroAcesso.titulo = "Redefinição de Senha";
@@ -233,17 +240,17 @@
       defineSenha()       
       {
           this.formPrimeiroAcesso.msgStatus = "";
-          console.log( this.formPrimeiroAcesso.email );
+          /*console.log( this.formPrimeiroAcesso.email );
           console.log( this.formPrimeiroAcesso.matricula );
           console.log( this.formPrimeiroAcesso.senha );
-          console.log( this.formPrimeiroAcesso.senhaConfirm ); 
+          console.log( this.formPrimeiroAcesso.senhaConfirm ); */
           
           var isMailOk = ( /^[^@]+@\w+(\.\w+)+\w$/.test( this.formPrimeiroAcesso.email ) );
           
 
           if ( !this.formPrimeiroAcesso.email || !isMailOk )  
           {
-                 console.log( "-EMAIL NOTTTT !!" );
+                // console.log( "-EMAIL NOTTTT !!" );
                  this.modalMessage = "Email inválido ou vazio.";
                  this.modalIsVisible = true;
           }
@@ -271,11 +278,11 @@
               }
           }; 
           //var senha = this.cifraSenha( this.formPrimeiroAcesso.senha );
-          console.log('-SEND DATA == ' + JSON.stringify(  sendData ) );
+          //console.log('-SEND DATA == ' + JSON.stringify(  sendData ) );
 
           axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
                .then( response => {
-                      console.log('-Response DATA == ' + JSON.stringify(  response.data ) + typeof response.data );
+                     // console.log('-Response DATA == ' + JSON.stringify(  response.data ) + typeof response.data );
                       this.modalIsVisible = true;
                       this.modalMessage = response.data.message;
               })
@@ -285,32 +292,34 @@
       },
       sendEmail()   
       {
-
-        /*var templateParams = {
+        /******** var templateParams = { *******
             name: 'James',
             notes: 'Check this out!'
-        };*/
+        }; ******* ******* ******* *******  *******/
         var SERVICE_ID = 'service_5sm00kk';
 
           try {
-              emailjs.sendForm( SERVICE_ID, "template_olo1a4j", this.$refs.form, 'EKyeK2SupjUXpL9tt', 
-              {
-                name: "this.name",
-                email: "paulo.fariaspaiva@gmail.com",
-                message: "okokok"
-              } )
-          } catch( error )  {
-              console.log({ error })
+               emailjs.sendForm( SERVICE_ID, "template_olo1a4j", this.$refs.form, 'EKyeK2SupjUXpL9tt', {
+                   name: "this.name",
+                   email: "paulo.fariaspaiva@gmail.com",
+                   message: "okokok"
+               } )
+          }   catch( error )    {
+              console.log("");
           }
           // Reset form field
           this.name = ''
           this.email = ''
           this.message = ''
       },
-      login()             
+
+      decodeUnicode(encodedString) {
+        return decodeURIComponent(
+          encodedString.replace(/\\u([\d\w]{4})/gi, (match, grp) => String.fromCharCode(parseInt(grp, 16)))
+        );
+      },
+       login()             
       {
-        // console.log( 'login !!!' );
-        
         var mat = this.form.matricula;
         var senha = this.form.senha;
         // console.log( mat + senha );
@@ -325,22 +334,23 @@
               }
           }
        };  
-       console.log( "SEND Login request ||" + JSON.stringify( sendData ) );
+       //console.log( "SEND Login request ||" + JSON.stringify( sendData ) );
        
        axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
             .then( response => {
-                   console.log('-Response DATA == ' + JSON.stringify(  response.data ) + typeof response.data );
+                   // console.log('-Response DATA == ' + JSON.stringify(  response.data ) + typeof response.data );
 
                    if ( ( typeof response.data ) == 'object' )  
                    {
                       var data = response.data;
-                      console.log('-DATA == ' + JSON.stringify(  data )  );
-                      console.log( "MSG = " + data.message + "|| code= " + data.code );
+                      // console.log('-DATA == ' + JSON.stringify(  data )  );
+                      // console.log( "MSG = " + data.message + "|| code= " + data.code );
+                      // ============= LOGIN SUCESSO  ============= 
                       if ( data.code == 0 ) 
                       {
                            var nomeCompleto = data.data.nome;
                            const numEspacos = nomeCompleto.split(' ').length - 1;
-                           console.log("Nome = " + nomeCompleto + " | " + numEspacos );
+                           // console.log("Nome = " + nomeCompleto + " | " + numEspacos );
                               
                            var firstName, lastName;
                               
@@ -359,22 +369,23 @@
                                 cpf: data.data.cpf,
                            }
                            this.$store.commit('setUser', userObj );
+                           // var x = this.$store.state.user.nome;
 
-                           var x = this.$store.state.user.nome;
 
-                           localStorage.setItem('user', JSON.stringify(userObj));
-                           
-                           console.log( "-- NOME = " + x );
+                           localStorage.setItem( 'user', JSON.stringify( userObj ) );                           
+                           // console.log( "-- NOME = " + x );
+
+                           const isAuth = true;
+                           this.$store.commit( 'setIsAutenticated', isAuth );
                            this.$router.push('/home');
 
                       }   else    {
-                            console.log( "MSG = " + data.message );
+                            // console.log( "MSG = " + data.message );
                             this.modalIsVisible = true;
                             this.modalMessage = response.data.message;
                           } 
                     }
-                    console.log('code:', response.data.code) ;
-
+                    // console.log('code:', response.data.code) ;
               })
               .catch(error => {
                     this.error = error.message;
@@ -402,10 +413,7 @@
         }, 5000);*/
         
     },
-      
-      register() {
-        console.log('registrar!!!');
-      }
+       
     }
   }
   </script>

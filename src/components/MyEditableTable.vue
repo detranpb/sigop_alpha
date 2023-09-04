@@ -155,14 +155,14 @@ export default
      
   created() 
   {
-      console.log( "Create Table where?? >> " + this.$route.name );
+      //console.log( "Create Table where?? >> " + this.$route.name );
       if ( this.$route.name != "addOperacoes" )
            this.isAddOperacoesPage = true;
 
       const keysToRemove = ["horaDevolucao", "dataDevolucao"]; // Example keys to remove
       // Filter the array to remove items based on the specified keys
       const filteredArray = this.fields.filter(item => !keysToRemove.includes(item.key));
-      console.log( JSON.stringify( filteredArray ) );
+      //console.log( JSON.stringify( filteredArray ) );
 
       // console.log( "CAMPOS >>" + JSON.stringify( this.fields ) );
       if ( this.compTableItens )  {
@@ -564,7 +564,7 @@ export default
 
 <style>
 .modal-content      {
-    background-color: rgba(0, 0, 0, 0.5); /* Sets the background color with alpha */
+  background-color: var( --modal-color );  /* Sets the background color with alpha */
 }
 .dados-operacao     {
   width: 100%;

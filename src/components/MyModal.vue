@@ -8,8 +8,8 @@
     <template v-slot:modal-footer="{ title }">
       <!-- <p>Rodapé personalizado</p> -->
       {{ title }}
-      <b-button size="sm" variant="outline-danger" @click="onAcceptModal()"> Sim </b-button>
-      <b-button size="sm" variant="outline-primary" @click="onRejectModal()"> Não </b-button>
+      <!-- <b-button size="sm" variant="outline-success" @click="onAcceptModal()"> Sim </b-button> -->
+      <!-- <b-button size="sm" variant="outline-primary" @click="onRejectModal()"> Não </b-button> -->
     </template>
   </b-modal>
 </template>

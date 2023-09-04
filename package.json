@@ -24,8 +24,10 @@
     "chart.js": "^4.3.0",
     "core-js": "^3.8.3",
     "vue": "^2.6.14",
+    "vue-knob-control": "^1.7.0",
     "vue-router": "^3.6.5",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.8",

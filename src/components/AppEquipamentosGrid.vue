@@ -152,7 +152,7 @@
     watch:          { 
         usuMatricula( newValue )         
         {
-          console.log( "MATRICULA !! >>> " + this.usuMatriculaLocal );
+          // console.log( "MATRICULA !! >>> " + this.usuMatriculaLocal );
           this.usuMatriculaLocal = newValue;
         }
     },
@@ -167,7 +167,7 @@
     created() 
     {
         // alert( "E = " + JSON.stringify( this.equipamentosBD ) );   
-        console.log( "Create Table where?? >> " + this.$route.name );
+        // console.log( "Create Table where?? >> " + this.$route.name );
         
         if ( this.$route.name == "addOperacoes" )   {
              this.isAddOperacoesPage = true;
@@ -176,13 +176,13 @@
              this.cadastrarBtnName = "Atualizar Agente/Equipamento";
         }
         this.$store.commit( 'setIsPageEditable', this.isAddOperacoesPage );
-        var str = this.$store.state.isPageEditable;
-        console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
-        console.log("-AppEquipGrid || isAddOperacoes? " + this.isAddOperacoesPage );
+        // var str = this.$store.state.isPageEditable;
+        /* console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
+        console.log("-AppEquipGrid || isAddOperacoes? " + this.isAddOperacoesPage );*/
 
         /* Monta o componente de acordo com os dados recebidos do BD, na propriedade atualizada no watch
            this.compTableItens */
-        console.log( "CAMPOS >>" + JSON.stringify( this.compTableItens ) );
+        // console.log( "CAMPOS >>" + JSON.stringify( this.compTableItens ) );
 
         // var tam = this.compTableItens.length;
         if( this.compTableItens != null ) {
@@ -284,11 +284,11 @@
         return isComponentDisabled;
       },
       velocimentoIniLabel( kmInicial ) { 
-          console.log( "Valor real = " + kmInicial );
+          //console.log( "Valor real = " + kmInicial );
           return ( kmInicial * 100 ) + "";
       },
       velocimentoFimLabel( kmFinal ) { 
-          console.log( "Valor real = " + kmFinal );
+          //console.log( "Valor real = " + kmFinal );
           return ( kmFinal * 100 ) + "";
       },
       handleCloseModal()  
@@ -313,12 +313,11 @@
           this.mVisible = true;
       },
       onModalClose()        {
-          console.log('Selected Option:', this.equipSelecionado );
-
+          // console.log('Selected Option:', this.equipSelecionado );
           if ( this.equipSelecionado == "Todos" ) 
           {
               for( var i=0; i<4; i++ )    {
-                   console.log( "i = " + i + "] " + this.equipOpcoes[i] );
+                   //console.log( "i = " + i + "] " + this.equipOpcoes[i] );
                    this.equipSelecionado = this.equipOpcoes[i];
                    this.addEquipComponent();
               }
@@ -330,7 +329,7 @@
       },
       sendStatusToParent() 
       {
-          console.log( "Sending data to parent....");
+         // console.log( "Sending data to parent....");
           this.$emit('data-updated', this.hasSavedOnDatabase );
       },
       getImageUrl() 
@@ -370,7 +369,7 @@
       addEquipComponent() 
       {
         // console.log( "LISTA EQUIPS =>> " + JSON.stringify( this.LISTA_EQUIPAMENTOS_SELECIONADOS ) );
-        console.log( "-->> kmInicial = " + this.kmInicial );
+        //console.log( "-->> kmInicial = " + this.kmInicial );
 
         if ( this.equipamentos.length >= this.LIMITE_EQUIPAMENTOS ) 
         {
@@ -483,7 +482,8 @@
                     operacao: 'consultar'
                 }
             };
-            console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) + tipoEq );
+            console.log( tipoEq );
+            // console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) + tipoEq );
             try {
                   var response = await axios.post( this.$SERVICES_ENDPOINT_URL , sendData );
                   // console.log( "Resposta API = " +  JSON.stringify( response.data , null,  2 ) );
@@ -520,7 +520,7 @@
       },
       isEquipamentosValidos()
       {
-        console.log( "==>> isEquipamentosValidos?" + this.equipamentos.length );
+        //console.log( "==>> isEquipamentosValidos?" + this.equipamentos.length );
         if ( this.equipamentos.length > 0 )
              return false;
       },
@@ -536,17 +536,18 @@
             // 1- CASO CADASTRANDO O AGENTE 
             if ( this.isAddOperacoesPage )    
             {
-                console.log( "MATRICULA ==>>> " + this.usuMatriculaLocal );
+                //console.log( "MATRICULA ==>>> " + this.usuMatriculaLocal );
                 matricula = this.usuMatriculaLocal.split(" - ")[0];
-                console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
+               // console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
                 
                 // var lista;
 
                 tam = this.equipamentos.length;
                 for  ( var i=0; i<tam; i++ )     
                 {
-                    console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
-                    console.log( "ID Ope. ==>> " + this.idOperacao );
+                    // console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
+                    // console.log( "ID Ope. ==>> " + this.idOperacao );
+                    // console.log( "VET AGENTE ==>> " + JSON.stringify( vet[ i ] ) );
 
                     if ( this.equipamentos[i].kmIni == null ) 
                          this.equipamentos[i].kmIni = 0.0;
@@ -566,21 +567,19 @@
                     if ( this.equipamentos[i].tipo == "Rádio HT" ) auxObj.tipoEquipamento = "RADIO_HT";
                     if ( this.equipamentos[i].tipo == "Colete"   ) auxObj.tipoEquipamento = "COLETE";             
                     vet[ i ] = auxObj;
-                    console.log( "VET AGENTE ==>> " + JSON.stringify( vet[ i ] ) );
                 }
-                console.log( JSON.stringify( vet ) );
+                //console.log( JSON.stringify( vet ) );
 
               // 2- CASO ATUALIZANDO O AGENTE, NO HISTÓRICO
               } else {
-                console.log(" CASO ATUALIZANDO O AGENTE....");
-
+                // console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
+                // console.log(" CASO ATUALIZANDO O AGENTE....");
                 matricula = this.usuMatriculaLocal;
-                console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
-                
                 tam = this.equipamentos.length;
+
                 for  (i=0; i<tam; i++ )     
                 {
-                    console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
+                    // console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
                     auxObj    =  {   
                           idOperacao : this.idOperacao, 
                           dataDevolucao : this.equipamentos[i].dataDevolucao,
@@ -597,9 +596,9 @@
                     if ( this.equipamentos[i].tipo == "Rádio HT" ) auxObj.tipoEquipamento = "RADIO_HT";
                     if ( this.equipamentos[i].tipo == "Colete"   ) auxObj.tipoEquipamento = "COLETE";             
                     vet[ i ] = auxObj;
-                    console.log( "VET AGENTE atualiza ==>> " + JSON.stringify( vet[ i ] ) );
+                    // console.log( "VET AGENTE atualiza ==>> " + JSON.stringify( vet[ i ] ) );
                 }
-                console.log( JSON.stringify( vet ) );
+                // console.log( JSON.stringify( vet ) );
               }
               this.cadastrarAgenteBD_LEGADO( vet );
 
@@ -607,7 +606,7 @@
       cadastrarAgenteBD_LEGADO( vet )             
       {
         // this.modalIsVisible = true;
-        console.log("CADASTRAR !!!!!");
+        // console.log("CADASTRAR !!!!!");
   
         var operacaoStr = "";
         // 1- CASO CADASTRANDO O AGENTE 
@@ -627,28 +626,27 @@
         {
           var objAuxStr = JSON.stringify( vet[i] ).replace( /\\/g, "" );
           // console.log( "objAuxStr = " + objAuxStr );
-          sendData.dados.objeto = JSON.parse( objAuxStr ); // vet[0]; // JSON.stringify( this.vet[0] ).replace( /\\/g, "" ).replace("id", "id_operacao");
-          // this.validaNovaLinha( sendData.dados.objeto );
-          // console.log( "objAuxStr = " + objAuxStr );
+          sendData.dados.objeto = JSON.parse( objAuxStr );  //---- vet[0]; // JSON.stringify( this.vet[0] ).replace( /\\/g, "" ).replace("id", "id_operacao");
+          // this.validaNovaLinha( sendData.dados.objeto ); //---- console.log( "objAuxStr = " + objAuxStr );
           
-          console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+          //console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
   
           axios.post(  this.$SERVICES_ENDPOINT_URL , sendData )
                 .then( response => {
-                       console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
+                       //console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
                        var checkSQLErrorStr = JSON.stringify( response.data ).replace( /\\/g, "" );
-                       console.log( "Error? " + checkSQLErrorStr.search("ERROR:") );
+                       //console.log( "Error? " + checkSQLErrorStr.search("ERROR:") );
                        if ( checkSQLErrorStr.search("ERROR:") != 0 ) 
                        {
                           this.modalMessage = "Erro de conexão: banco de dados.";    
                           this.modalIsVisible = true;
-                          console.log( "AKIIIIII !!!!!!! ");
+                          //console.log( "AKIIIIII !!!!!!! ");
                        }
 
                        var data = response.data; // -->>> Isso chama o watcher !
                       // console.log("Dados retornados = " +  this.responseData.dados );
                       /*console.log('-DATA ==>>> ' + JSON.stringify(  response.data )  );
-                      console.log( "MSSG ==>>> " + data.message + "|| code= " + data.code );*/
+                        console.log( "MSSG ==>>> " + data.message + "|| code= " + data.code );*/
   
                       if ( data.code == 0 )   
                       {
@@ -670,40 +668,32 @@
   };
   </script>
   
-  
-  
   <style>
-  .modal-content      {
-      background-color: rgba(0, 0, 0, 0.5); /* Sets the background color with alpha */
+  .modal-content                   {
+      background-color: var( --modal-color );  /*  rgb(158, 194, 218); - Sets the background color with alpha */
   }
-  .dados-operacao     {
+  .dados-operacao                  {
     width: 100%;
     background-color: rgb(193, 193, 194);
   }
-  
-  .table-container    {
+  .table-container                 {
     margin: 10px;
   }
-  
-  table.editable-table {
+  table.editable-table             {
     margin-top: 10px;
     font-size: small;
   }
-  
-  table.editable-table td {
+  table.editable-table td          {
     vertical-align: middle;
   }
-  
-  .editable-table .data-cell {
+  .editable-table .data-cell       {
     padding: 8px;
     vertical-align: middle;
   }
-  
   .editable-table .custom-checkbox {
     width: 50px;
   }
-  
-  .remove-icon {
+  .remove-icon                     {
     color: red;
     cursor: pointer;
     font-size: 20px;

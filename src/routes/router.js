@@ -13,14 +13,15 @@ import AppHome from '@/pages/AppHome';
 
 const routes = [
     {
-        path:'/',
+        path:'/login',
         name: 'appLogin',
-        component:AppLogin
+        component:AppLogin,
+        default: true
     },
     {
         path:'/home',
         name: 'appHome',
-        component:AppHome
+        component:AppHome,
     },
     {
         path:'/busca',
@@ -46,17 +47,32 @@ const routes = [
         path:'/historico-equipamentos',
         name: 'historicoEquipamentos',
         component:HistoricoEquipamentos
-    },
-    /*{
-      path: '/login', //criação da rota
-      component: Login
-    },*/
+    }, 
+    {
+        path: '/',
+        redirect: '/login', // Redirect to the login page by default
+      },
 ];
 
 const router = new VueRouter({
-    routes,
-    mode:'history'
+    routes,    
+    mode:'hash'
 });
  
+/*router.beforeEach( ( to, from, next ) =>  {
+    
+    // Check if the user is authenticated
+     // router.app.$store.state.auth.isAuthenticated;
+     const isAuthenticated = this.$store.state.isAuthenticated;
+  
+    // If the route requires authentication and the user is not authenticated,
+    // redirect them to the login page
+    if ( to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated )  {
+        next('/login');
+    }   else    {
+        next();
+    }
+});*/
+
 
 export default router; // É exportado, mas deve ser importado no vue (main.js)

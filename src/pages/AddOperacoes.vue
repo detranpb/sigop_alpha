@@ -56,19 +56,28 @@
     },
     created()   
     {
+      this.authenticationControl();
       this.$store.commit('setIsPageEditable', true );
     },
-    methods: {
-      closeTab(x) {
-        for (let i = 0; i < this.tabs.length; i++) {
-          if (this.tabs[i] === x) {
-              this.tabs.splice(i, 1)
-          }
+    methods: 
+    { 
+      authenticationControl()   {
+        var isAuth = this.$store.state.isAutenticated;
+        console.log( "- Auth? " + isAuth );
+        if ( !isAuth )          {
+              console.log("indo p login...");
+              this.$router.push('/login');
         }
-        this.tabCounter--;
       },
-      newTab() {
-        this.tabs.push(this.tabCounter++)
+      closeTab( x )   {
+          for (let i = 0; i < this.tabs.length; i++)  {
+            if ( this.tabs[i] === x )  
+                this.tabs.splice(i, 1)
+          }
+          this.tabCounter--;
+      },
+      newTab()        {
+          this.tabs.push(this.tabCounter++)
       }
     }
   }

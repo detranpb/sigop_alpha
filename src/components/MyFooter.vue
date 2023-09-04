@@ -2,11 +2,11 @@
     <footer>
 
         <a class="socialLink" 
-            v-for="(socialLink,index) in socialLinks" 
-            v-bind:key="index"
-            v-bind:href="socialLink.link"
-            target="_blank">
-            <img :alt="socialLink.label" :title="socialLink.label" :src="socialLink.icon">
+           v-for="( socialLink, index ) in socialLinks" 
+           v-bind:key="index"
+           href="https://www.instagram.com/detrangovpb/"
+           target="_blank">
+           <img :alt="socialLink.label" :title="socialLink.label" :src="socialLink.icon">
         </a>
     </footer>
 </template>
@@ -29,7 +29,7 @@ export default{
 </script>
 
 <style scoped>
-    footer{
+    footer                  {
         width: 100%;
         height: 60px;
         background-color: var(--color-background-nav);
@@ -37,7 +37,7 @@ export default{
         justify-content: center;
         align-items: center;
     }
-    .socialLink{
+    .socialLink             {
         border:2px solid var(--color-text-light);
         display: flex;
         align-items: center;
@@ -48,7 +48,7 @@ export default{
         margin:0 10px;
         
     }
-    .socialLink img{
+    .socialLink img         {
         width: 20px;
 
     }
