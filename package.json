@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy": "sh ./scripts/deploy.sh"
+    "deploy": "sh ./scripts/deploy.sh",
+    "gitpush": "sh ./scripts/gitpush.sh"
   },
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
