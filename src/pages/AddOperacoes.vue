@@ -61,7 +61,8 @@
     },
     methods: 
     { 
-      authenticationControl()   {
+      authenticationControl()   
+      {
         var isAuth = this.$store.state.isAutenticated;
         console.log( "- Auth? " + isAuth );
         if ( !isAuth )          {
