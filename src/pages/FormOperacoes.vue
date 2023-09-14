@@ -164,7 +164,7 @@ export default              {
   created() 
   {
       // console.log( JSON.stringify( this.MATRICULAS_VALIDAS ) );
-      this.authenticationControl();
+      //this.authenticationControl();
       this.getListaAgentes();
 
         if ( this.$route.name == "addOperacoes" ) {

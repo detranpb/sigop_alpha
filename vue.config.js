@@ -2,7 +2,7 @@ const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: process.env.NODE_ENV === 'production'
-  ? 'http://184.72.238.232/dist/'
+  ? 'http://paivaservices.com/detran-sigop/'
   : '/',
   devServer:    {
     proxy: {

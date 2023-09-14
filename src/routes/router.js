@@ -59,20 +59,7 @@ const router = new VueRouter({
     mode:'hash'
 });
  
-/*router.beforeEach( ( to, from, next ) =>  {
-    
-    // Check if the user is authenticated
-     // router.app.$store.state.auth.isAuthenticated;
-     const isAuthenticated = this.$store.state.isAuthenticated;
-  
-    // If the route requires authentication and the user is not authenticated,
-    // redirect them to the login page
-    if ( to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated )  {
-        next('/login');
-    }   else    {
-        next();
-    }
-});*/
+ 
 
 
 export default router; // É exportado, mas deve ser importado no vue (main.js)

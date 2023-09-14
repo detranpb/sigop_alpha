@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main  style="background-color: rgba(236, 245, 243, 0.89);">
     <!-- Add the style and icon you want using the String format -->
     <!--<font-awesome-icon icon="fa-solid fa-user-secret" /> -->
 
@@ -127,13 +127,30 @@
           </b-form>
         </div>
       </b-col>
-      
 
       <!-- COLUNA SEGUNDA-->
-      <b-col sm="7">
-          <b-col sm="7" class="d-flex justify-content-center align-items-center">
-            <img src="https://raw.githubusercontent.com/paulovfppiox/policiamento-assets/main/banner-login.jpg" class="img-login" />
-          </b-col>
+      <b-col sm="7" style="background-color: rgba(236, 245, 243, 0.89);">
+      <div>
+            <b-carousel id="carousel-fade" style="text-shadow: 0px 0px 2px #000" fade indicators :interval="4000">
+              <b-carousel-slide
+                img-src="http://184.72.238.232/img/banner1.jpg"
+                style="height: 655px;"
+                class="banner-blur">
+              </b-carousel-slide> 
+                
+              <b-carousel-slide
+                img-src="http://184.72.238.232/img/banner2.jpg"
+                class="banner-blur"
+                style="height: 655px;"
+              ></b-carousel-slide>
+
+              <b-carousel-slide
+                img-src="http://184.72.238.232/img/banner3.jpg"
+                class="banner-blur"
+                style="height: 655px;"
+              ></b-carousel-slide>
+            </b-carousel>
+      </div>
       </b-col>
     </b-row>
 </main>
@@ -187,15 +204,18 @@
     },
     created()   
     {
-      // Reseta status de autenticação
-      const isAuth = false;
-      this.$store.commit( 'setIsAutenticated', isAuth );
+      var isAuth = localStorage.getItem('isAuthenticated');
+      console.log( "LOGIN Created | isAuth? = " + isAuth );
+      /*console.log("KLKL");
+      this.$router.history.listen( (newLocation) => {
+        console.log( newLocation.path );
+      })*/ 
     },
     methods:      {
       openCriaSenhaModal( flag )          
       {
           //console.log( "T => " + this.modSenhaVisible );
-          if ( flag )   
+          if ( flag )
           {
               this.formPrimeiroAcesso.titulo = "Redefinição de Senha";
               this.formPrimeiroAcesso.btnNameConfirm = "Criar senha";
@@ -248,16 +268,15 @@
           var isMailOk = ( /^[^@]+@\w+(\.\w+)+\w$/.test( this.formPrimeiroAcesso.email ) );
           
 
-          if ( !this.formPrimeiroAcesso.email || !isMailOk )  
-          {
+          if ( !this.formPrimeiroAcesso.email || !isMailOk )    {
                 // console.log( "-EMAIL NOTTTT !!" );
-                 this.modalMessage = "Email inválido ou vazio.";
-                 this.modalIsVisible = true;
+                this.modalMessage = "Email inválido ou vazio.";
+                this.modalIsVisible = true;
           }
-          if ( this.formPrimeiroAcesso.senha.length > 0 ) {
+          if ( this.formPrimeiroAcesso.senha.length > 0 )       {
                 if ( this.formPrimeiroAcesso.senha != this.formPrimeiroAcesso.senhaConfirm )  {
-                  this.modalMessage = "Senhas divergentes.";   
-                  this.modalIsVisible = true;
+                     this.modalMessage = "Senhas divergentes.";   
+                     this.modalIsVisible = true;
                 }
           }   else    {
             this.modalMessage = "Senha vazia.";   
@@ -375,9 +394,28 @@
                            localStorage.setItem( 'user', JSON.stringify( userObj ) );                           
                            // console.log( "-- NOME = " + x );
 
+                            /** autenticação com LOCAL !!!!!!! */
                            const isAuth = true;
-                           this.$store.commit( 'setIsAutenticated', isAuth );
-                           this.$router.push('/home');
+                           localStorage.setItem( 'isAuthenticated', isAuth );
+                           this.$cookies.set( 'isAuthenticated', 4444 );
+
+                          /** autenticação com STORE !!!!!!!
+                           const isAuth = true; |||| this.$store.commit( 'setIsAutenticated', isAuth ); */
+                           
+                           // ############ TESTE ###########
+                           /* this.$emit('TheLogin::loginResult', {loginResult: true}) */
+
+                           //---- Aplica um Delay ----
+                           var tempo = 0;
+                           setTimeout( () => {
+                            this.$router.push({
+                                  path: '/home',
+                                  replace: true // reload page
+                            });
+                            console.log( tempo++ );
+                           }, 100 );
+
+                           // this.$router.push('/home');
 
                       }   else    {
                             // console.log( "MSG = " + data.message );
@@ -419,7 +457,9 @@
   </script>
    
   <style>
+  
    
+
   *, /*resetar o estilo da página*/
   *::after,
   *::before {
@@ -433,26 +473,23 @@
     margin-left: 0;
   }
    
-  .left-login {
+  .left-login       {
     background-color: #F2F2F2;
-  }
-   
-  .title-login {
+  }   
+  .title-login      {
     font-weight: bold;
   }
-  .form-group {
+  .form-group       {
     margin-top:15px;
     margin-bottom:15px;
   }
-  .img-login  {
-    width: 250%;
-    height: calc(100vh - 120px);
-    margin-inline-start: 330px;
-    filter: blur(0.5px);
-    -webkit-filter: blur(0.5px);
-    opacity: 0.3;
+
+  .banner-blur      {   
+    filter: blur( 1.5px );
+    -webkit-filter: blur( 1.5px) ;
   }
-  .loginLabel   {
+
+  .loginLabel       {
       display: flex;
       width: 20%;
       justify-content: space-between;

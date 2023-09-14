@@ -3,7 +3,8 @@
     <!-- <b-button @click="showModal()">Show Modal</b-button>-->
     <my-modal id="myModal" title="Confirmation" message="Are you sure?" :visible="modalIsVisible" @update:visible="modalIsVisible = $event" />
     <br>
-    <h4 class="card-title text-center titulo-paginas"> Seja Bem-Vindo </h4>
+    <br>
+    <h3 class="card-title text-center titulo-paginas"> Seja Bem-Vindo </h3>
     <!-- <DisplayOperacoes/> -->
     <!-- <AppDashboard></AppDashboard> -->
 </main>
@@ -15,12 +16,12 @@ import axios from 'axios';
 export default      
 {
   name: 'RelatoriosOperacoes',
-  components: {
-    MyModal,
-    // AppDashboard
-   // DisplayOperacoes
+  components:   {
+      MyModal,
+      // AppDashboard
+    // DisplayOperacoes
   },
-  data()      {
+  data()        {
       return {
           modalIsVisible: false,
           listaAgentes: [],
@@ -34,7 +35,7 @@ export default
             console.log("indo p login...");
             this.$router.push('/login');
       }*/
-      this.authenticationControl();
+      // this.authenticationControl();
       this.getListaAgentes();
       // console.log( "AppHome =>> " + JSON.stringify( this.listaAgentes ) );
   }, 
@@ -46,14 +47,6 @@ export default
   methods: {
     showModal()                 {
         this.modalIsVisible = true;
-    },
-    authenticationControl()     {
-        var isAuth = this.$store.state.isAutenticated;
-        console.log( "- Auth? " + isAuth );
-        if ( !isAuth )          {
-              console.log("indo p login...");
-              this.$router.push('/login');
-        }
     },
     getListaAgentes() 
     {

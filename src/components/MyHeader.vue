@@ -20,7 +20,7 @@
 					{{ USER_LASTNAME  }} <br>
 					{{ USER_MATRICULA }} <br>
 					<i class="fas fa-sign-out-alt"></i>
-					<a href="index.html#/login"> Sair </a>
+					<a href="index.html#/login" v-on:click="logout"> Sair </a>
 				</div>
 			</div>
 		</nav>
@@ -53,18 +53,20 @@
 
 <script>
 /* eslint-disable no-mixed-spaces-and-tabs */
-export default 						{
+export default 					
+{
   name:'MyHeader',
-  data()			{	
+  data()				  {	
 		return {
 			variant: 'dark',
 			menuActive: false 
 		}
-  },
+  }, 
   computed: 	
   {
 		/** Exibe o botão menu e avatar apenas nas telas que não sejam o Login. **/
-		showButtonAndAvatar() 		{
+		showButtonAndAvatar() 		
+		{
 			return !( this.$route.name === 'appLogin' ) 
 		},
 
@@ -77,15 +79,14 @@ export default 						{
 			return nome;**/
 			const user = localStorage.getItem('user');
 			// console.log( "Load sobrenome ==>> " + JSON.parse(user).sobrenome );
-			if (user) {
-				return (JSON.parse(user).nome).toUpperCase();
-			} else { return ''; }
+			if ( user )  { return (JSON.parse(user).nome).toUpperCase();
+			} 	 else 	 {  return '';  }
 		},
 		USER_LASTNAME()		  		{
 			/** var sobrenome = ( this.$store.state.user.sobrenome ).toUpperCase();
 			console.log(" --> Sobrenome = " + sobrenome );
 			return sobrenome;**/
-			
+
 			const user = localStorage.getItem('user');
 			// console.log( "Load nome ==>> " + JSON.parse(user).nome );
 			if (user) {
@@ -100,18 +101,43 @@ export default 						{
 			return this.$store.state.user.matricula;
 		},
   },
+  mounted() 	{
+    // Get the MyHeader component instance.
+    // Reload the key value.
+  },
+  created()		{
+	//console.log("kkk= " + this.$route.name  );
+  },
+  updated() 	{
+   	 //console.log("kkk= " + this.$route.name  );
+
+      /*this.$router.history.listen( (newLocation) => {
+        console.log( newLocation.path );
+      })*/
+  },
   methods:		{
-		openMenu: function()		{
+
+		logout()					{
+			console.log("-Saindo... ");
+			const isAuth = false;
+        	localStorage.setItem( 'isAuthenticated', isAuth );
+
+			const cookieAuth = this.$cookies.get('isAuthenticated');
+			console.log( "-LOGOUT || Cookie? " + cookieAuth );
+			this.$cookies.remove('isAuthenticated');
+		},
+		openMenu: function()	  {
 			this.menuActive = true;
 		},
-		closeMenu: function()		{
+		closeMenu: function()	   {
 			this.menuActive = false;
 		},
 		showRouteName() 			{
-			alert(this.$route.name);
+			alert( this.$route.name );
 		}
-  }
 }
+}
+ 
 </script>
 
 <!-- Escopado só pro compo --> 

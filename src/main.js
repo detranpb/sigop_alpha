@@ -2,16 +2,25 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './routes/router.js';
 import store  from './store/store.js';
+import VueCookies from 'vue-cookies';
 
 import MyModal from '@/components/MyModal.vue';
 import KnobControl from 'vue-knob-control'
 
+/* Imports do VueChart
+import { Chart, registerables } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
+import VComp from "@vue/composition-api"; */
+
 Vue.use( KnobControl )
-Vue.component('my-modal', MyModal);
+Vue.component( 'my-modal', MyModal );
 Vue.use( store );
+Vue.use( VueCookies );
+
+/* Chart.register( ...registerables, zoomPlugin );
+Vue.use( VComp );*/
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-
 console.log( Vue.version );
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)

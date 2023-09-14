@@ -56,20 +56,11 @@
     },
     created()   
     {
-      this.authenticationControl();
+      // this.authenticationControl();
       this.$store.commit('setIsPageEditable', true );
     },
     methods: 
     { 
-      authenticationControl()   
-      {
-        var isAuth = this.$store.state.isAutenticated;
-        console.log( "- Auth? " + isAuth );
-        if ( !isAuth )          {
-              console.log("indo p login...");
-              this.$router.push('/login');
-        }
-      },
       closeTab( x )   {
           for (let i = 0; i < this.tabs.length; i++)  {
             if ( this.tabs[i] === x )  

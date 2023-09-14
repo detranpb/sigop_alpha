@@ -136,7 +136,7 @@
     },
     created()   
     { 
-        this.authenticationControl();
+        // this.authenticationControl();
 
         if ( this.$route.name == "addOperacoes" ) {
              this.isAddOperacoesPage = true;
