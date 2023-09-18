@@ -18,9 +18,6 @@ import './styles/global.css';
 
 import MyHeader from './components/MyHeader';
 import MyFooter from './components/MyFooter';
-import { ChartPlugin } from '@syncfusion/ej2-vue-charts';
-
-Vue.use( ChartPlugin )
 
 export default      {
     name: 'App',
@@ -54,9 +51,9 @@ export default      {
         },
         checkAuthentication()           {
             
-            console.log("- Page name = " + this.$route.name  );
+            // console.log("- Page name = " + this.$route.name  );
             const cookieAuth = this.$cookies.get('isAuthenticated');
-            console.log( "-Cookie? " + cookieAuth );
+            // console.log( "-Cookie? " + cookieAuth );
             
               if ( this.$route.name != "appLogin" )      {
                   if ( ( cookieAuth == false )||( cookieAuth == null ) )       {

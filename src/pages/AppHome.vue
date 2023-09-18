@@ -1,16 +1,46 @@
 <template>
-  <main>
+  <main >
     <!-- <b-button @click="showModal()">Show Modal</b-button>-->
     <my-modal id="myModal" title="Confirmation" message="Are you sure?" :visible="modalIsVisible" @update:visible="modalIsVisible = $event" />
     <br>
     <br>
-    <h3 class="card-title text-center titulo-paginas"> Seja Bem-Vindo </h3>
+    <h3 class="card-title text-center titulo-paginas" style="font-size: 20px;"> Seja Bem-Vindo {{ USER_FIRSTNAME }} {{ USER_LASTNAME  }} </h3>
     <!-- <DisplayOperacoes/> -->
     <!-- <AppDashboard></AppDashboard> -->
+    <br>
+    <br>
+
+    <b-container class="bv-example-row" style="background-color: rgb(213, 218, 219);height: 60%;" >
+    <b-row>
+      <br>
+      <br>
+      <b-col>
+          <div style="position: relative; height: 10vh; width:30vw">
+            <canvas id="chartBar"></canvas>
+          </div>
+      </b-col>
+      <b-col>
+          <div style="position: relative; height: 10vh; width:20vw">
+            <canvas id="chartPie"></canvas>
+          </div>
+      </b-col>
+      <b-col>
+          <div style="position: relative; height: 20vh; width:20vw">
+            <canvas id="chartLine"></canvas>
+          </div>
+      </b-col>
+    </b-row>
+    </b-container>
+   
+
+   
+
 </main>
 </template>
 <script>
+import Chart from 'chart.js/auto';
 import MyModal from '@/components/MyModal.vue';
+
 // import AppDashboard from '@/components/AppDashboard.vue';
 import axios from 'axios';
 export default      
@@ -27,6 +57,138 @@ export default
           listaAgentes: [],
       }
   },
+  mounted()     {
+
+    const CHART_COLORS = {
+      red: 'rgb(255, 99, 132)',
+      orange: 'rgb(255, 159, 64)',
+      yellow: 'rgb(255, 205, 86)',
+      green: 'rgb(95, 192, 192)',
+      blue: 'rgb(54, 162, 235)',
+      purple: 'rgb(153, 102, 255)',
+      grey: 'rgb(201, 203, 207)'
+    };
+
+    // Chart.defaults.font.family = "Lato";
+    // Chart.defaults.font.size = 18;
+    Chart.defaults.color = "black";
+
+    // ################################################################
+    const dataBar = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        datasets: [
+          {
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+              'rgb(01, 128, 255)',
+              'rgb(50, 99, 122)',
+              'rgb(200, 59, 132)',
+              'rgb(155, 159, 64)',
+              'rgb(51, 204, 89)',
+              'rgb(51, 67, 70)',
+            ],
+            borderWidth: 1
+          }
+      ]
+    };
+    const configBar = {
+        type: 'bar',
+        data: dataBar,
+        options: {
+           scales: {
+              y: {  beginAtZero: true }
+           },
+           responsive: true,
+           plugins: {
+              title: {
+                display: true,
+                fontWeight: 'bold',
+                text: 'N° Operações por Município'
+              }
+          }
+        }
+    };
+    const chartBar = new Chart( document.getElementById('chartBar'), configBar );
+    chartBar;
+
+
+    // ################################################################
+    const dataPie = {
+      labels: [ 'João Pessoa', 'Bayeux', 'Campina Grande', 'Santa Rita' ],
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: [ 22, 19, 3, 5 ],
+          backgroundColor: ['rgb(111, 99, 132)',
+              'rgb(50, 99, 122)',
+              'rgb(200, 59, 132)',
+              'rgb(155, 159, 64)', ]
+        }
+      ]
+    };
+    const configPie = {
+        type: 'pie',
+        data: dataPie,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              fontWeight: 'bold',
+              text: 'N° Operações por Município'
+            }
+          }
+        },
+    };
+    const x = document.getElementById('chartPie')
+    const chartPie = new Chart( x, configPie );
+    chartPie;
+    
+
+    // ################################################################
+    
+    const dataLine = {
+    labels: [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul' ],
+    datasets: [
+      {
+        label: 'Carro',
+        data: ['11', '20', '33', '43', '12', '36', '71'],
+        borderColor: CHART_COLORS.orange,
+        backgroundColor: CHART_COLORS.orange,
+      },
+      {
+        label: 'Moto',
+        data: ['25', '20', '34', '63', '22', '56', '85'],
+        borderColor: CHART_COLORS.green,
+        backgroundColor: CHART_COLORS.green,
+      }
+    ]
+  };
+
+    const configLine = {
+      type: 'line',
+      data: dataLine,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'N° de Abordagens por Tipo'
+          }
+        }
+      },
+    };
+    const chartLine = new Chart( document.getElementById('chartLine'), configLine );
+    chartLine;
+
+
+  },
   created()  
   {   
       /*var isAuth = this.$store.state.isAutenticated;
@@ -42,7 +204,28 @@ export default
   computed: {
     LISTA_AGENTES()             {
         return this.$store.state.listaAgentes;
-    }
+    },
+    USER_FIRSTNAME()	  		
+		{
+			/** var nome = ( this.$store.state.user.nome ).toUpperCase();
+			console.log(" --> User Nome = " + nome );
+			return nome;**/
+			const user = localStorage.getItem('user');
+			// console.log( "Load sobrenome ==>> " + JSON.parse(user).sobrenome );
+			if ( user )  { return (JSON.parse(user).nome).toUpperCase();
+			} 	 else 	 {  return '';  }
+		},
+		USER_LASTNAME()		  		{
+			/** var sobrenome = ( this.$store.state.user.sobrenome ).toUpperCase();
+			console.log(" --> Sobrenome = " + sobrenome );
+			return sobrenome;**/
+
+			const user = localStorage.getItem('user');
+			// console.log( "Load nome ==>> " + JSON.parse(user).nome );
+			if (user) {
+				return (JSON.parse(user).sobrenome).toUpperCase();
+			} else { return ''; }
+		},
   },
   methods: {
     showModal()                 {
@@ -124,7 +307,7 @@ export default
 
 /* the individual entries */
 .sky-blue{
-  background-color: lightskyblue;
+  background-color: rgb(135, 206, 250);
   height:50%;
   width: 50%;
   display: block;

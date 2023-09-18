@@ -170,6 +170,9 @@
     data()    
     {
       return      {
+
+          MATRICULAS_AUTORIZADAS: [ "555", "42641", "42579", "42218", "42731", "42005", "42277" ],
+
           modSenhaVisible: false,
           modalIsVisible: false,
           modalMessage: "Confirma operação?",
@@ -204,8 +207,8 @@
     },
     created()   
     {
-      var isAuth = localStorage.getItem('isAuthenticated');
-      console.log( "LOGIN Created | isAuth? = " + isAuth );
+      // var isAuth = localStorage.getItem('isAuthenticated');
+      // console.log( "LOGIN Created | isAuth? = " + isAuth );
       /*console.log("KLKL");
       this.$router.history.listen( (newLocation) => {
         console.log( newLocation.path );
@@ -225,48 +228,46 @@
           }
           this.modSenhaVisible = true;
       },
-      onCriaSenhaModalClose()           {
+      onCriaSenhaModalClose()             {
           this.modSenhaVisible = false;
           this.formPrimeiroAcesso.msgStatus = " "; 
           this.isValid = -1;
       },
-      onModalClose()                    {
+      onModalClose()                      {
           this.modalSenhaVisible = false;
       },
-      handleCloseModal()                {
+      handleCloseModal()                  {
           this.modalIsVisible = false;
           this.modalMessage = "x";
       },
-      handleAcceptModal()               {
+      handleAcceptModal()                 {
           // console.log("Accept ... ");
           this.modalIsVisible = false;
           this.modalMessage = "y";
       },
-      handleRejectModal()        {
+      handleRejectModal()                 {
           // console.log("Reject ... ");
           this.modalIsVisible = false;
           this.modalMessage = "d";
       },
-      cifraSenha(text)           {
-        var secretKey = "PAULO";
-        const keyLength = secretKey.length;
-        const encryptedText = [];
-        for (let i = 0; i < text.length; i++) {
-          const encryptedCharacter = text.charCodeAt(i) ^ secretKey.charCodeAt(i % keyLength);
-          encryptedText.push(encryptedCharacter);
-        }
-        return encryptedText.join('');
+      cifraSenha( text )                  {
+          var secretKey = "PAULO";
+          const keyLength = secretKey.length;
+          const encryptedText = [];
+          for (let i = 0; i < text.length; i++) {
+            const encryptedCharacter = text.charCodeAt(i) ^ secretKey.charCodeAt(i % keyLength);
+            encryptedText.push(encryptedCharacter);
+          }
+          return encryptedText.join('');
       },
       defineSenha()       
       {
           this.formPrimeiroAcesso.msgStatus = "";
-          /*console.log( this.formPrimeiroAcesso.email );
-          console.log( this.formPrimeiroAcesso.matricula );
-          console.log( this.formPrimeiroAcesso.senha );
-          console.log( this.formPrimeiroAcesso.senhaConfirm ); */
-          
+          /******* 
+           * console.log( this.formPrimeiroAcesso.email ); console.log( this.formPrimeiroAcesso.matricula );
+           * console.log( this.formPrimeiroAcesso.senha ); console.log( this.formPrimeiroAcesso.senhaConfirm );
+          ******/
           var isMailOk = ( /^[^@]+@\w+(\.\w+)+\w$/.test( this.formPrimeiroAcesso.email ) );
-          
 
           if ( !this.formPrimeiroAcesso.email || !isMailOk )    {
                 // console.log( "-EMAIL NOTTTT !!" );
@@ -274,21 +275,20 @@
                 this.modalIsVisible = true;
           }
           if ( this.formPrimeiroAcesso.senha.length > 0 )       {
-                if ( this.formPrimeiroAcesso.senha != this.formPrimeiroAcesso.senhaConfirm )  {
-                     this.modalMessage = "Senhas divergentes.";   
-                     this.modalIsVisible = true;
-                }
+               if ( this.formPrimeiroAcesso.senha != this.formPrimeiroAcesso.senhaConfirm )  {
+                    this.modalMessage = "Senhas divergentes.";   
+                    this.modalIsVisible = true;
+               }
           }   else    {
-            this.modalMessage = "Senha vazia.";   
-            this.modalIsVisible = true;
+              this.modalMessage   = "Senha vazia.";   
+              this.modalIsVisible = true;
           }
-
           var sendData = {
               dados:  {
                   entidade: 'usuario',
                   operacao: 'cadastrar',
                   objeto:              {
-                     nome: this.formPrimeiroAcesso.nome,
+                    nome: this.formPrimeiroAcesso.nome,
                      matricula: this.formPrimeiroAcesso.matricula,
                      cpf: this.formPrimeiroAcesso.cpf,
                      email: this.formPrimeiroAcesso.email,
@@ -332,17 +332,24 @@
           this.message = ''
       },
 
-      decodeUnicode(encodedString) {
-        return decodeURIComponent(
-          encodedString.replace(/\\u([\d\w]{4})/gi, (match, grp) => String.fromCharCode(parseInt(grp, 16)))
-        );
+      decodeUnicode( encodedString )      {
+          return decodeURIComponent (
+            encodedString.replace(/\\u([\d\w]{4})/gi, (match, grp) => String.fromCharCode(parseInt(grp, 16)))
+          );
       },
-       login()             
+      login()             
       {
         var mat = this.form.matricula;
         var senha = this.form.senha;
         // console.log( mat + senha );
+
+        if ( !this.MATRICULAS_AUTORIZADAS.includes( mat ) ) {
+              this.modalIsVisible = true;
+              this.modalMessage = "Usuário não tem acesso permitido.";
+              return;
+        }
         
+
         var sendData = {
           dados: {
               entidade: 'usuario',

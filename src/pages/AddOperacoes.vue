@@ -76,8 +76,13 @@
 </script>
 
 <style>
-.btnCancel  {
-  content: "";
-  padding-left: 85%;
+.btnCancel      {
+ content: "";
+ padding-left: 85%;
+}
+
+.btn-container  {
+ display: flex;
+ justify-content: center;
 }
 </style>

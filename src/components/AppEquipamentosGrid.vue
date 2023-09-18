@@ -4,9 +4,14 @@
         <div class="modal-header">
             <h5 class="modal-title"> Selecione Equipamento </h5>
         </div>
+
         <div class="modal-body">
             <b-form-select v-model="equipSelecionado" :options="equipOpcoes"></b-form-select>
         </div>
+
+        <b-button variant="success" @click="onModalClose()">
+            <i class="fas fa-plus"></i> Adicionar Equipamento
+        </b-button>
       </b-modal>
   
       <my-modal id="myModal" title="Confirmação" :message="modalMessage" 
@@ -19,7 +24,7 @@
       
       <div class="btn-add-equip">
         <b-button v-if="IS_PAGE_EDITABLE && !hasSavedOnDatabase" class="btn-add" variant="success" @click="showModal()">
-          <i class="fas fa-plus"></i> Adicionar Equipamento
+          <i class="fas fa-plus"></i> Selecionar Equipamentos
         </b-button>
       </div>
 
@@ -41,6 +46,7 @@
             <!-- <div class="idDataLabel"> {{ equip.idDataLabel }} : </div> -->
             <b-form-input 
                 class="mx-auto"
+                placeholder="Insira ID."
                 style="width: 120px" 
                 type="text"
                 autocomplete="off" 
@@ -100,8 +106,8 @@
             
           </div>
           </div>
-  
-      <br>
+    <br>
+
     <!--
       <div class="table-container">
       <div class="table-centralizer">
@@ -204,7 +210,7 @@
               }
               // console.log( "SELECTED !!!!! " + this.equipSelecionado );
 
-              const equipamento   =   {
+              const equipamento       =         {
                     id: this.equipamentos.length + 1,
                     url: this.getImageUrl(),
                     imageSize: this.getImageSize(),
@@ -384,7 +390,7 @@
              const hasViatura = this.equipamentos.some(equip => equip.tipo === 'Viatura');
              if ( hasViatura ) 
              {
-                 this.modalMessage   = "Viatura já inserida para este agente.";  
+                 this.modalMessage   = "Viatura já inserida para este Agente.";  
                  this.modalIsVisible = true;
                  return;
              }
@@ -524,34 +530,58 @@
         if ( this.equipamentos.length > 0 )
              return false;
       },
-      
       /* ********* NOVA FUNÇÃO DE ADAPTAÇÃO DA ESTRUTURA DE DADOS ********* */
-       cadastrarAgenteBD() 
-       {  
+      cadastrarAgenteBD() 
+      {  
             var vet = []; // vet[0] = {  idOperacao: 1, dataDevolucao: "0000-00-00", horaDevolucao: "0000-00-00", "idEquipamento":"123", "isAvariado":null, "matriculaAgente":"123"} 
             var matricula;
             var tam;
             var auxObj;
-
+            
             // 1- CASO CADASTRANDO O AGENTE 
             if ( this.isAddOperacoesPage )    
             {
-                //console.log( "MATRICULA ==>>> " + this.usuMatriculaLocal );
-                matricula = this.usuMatriculaLocal.split(" - ")[0];
-               // console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
-                
+                console.log("-- MATRICULA ==>>> " + this.usuMatriculaLocal );
+                if ( this.usuMatriculaLocal == null )   {
+                     this.modalMessage = "Matrícula não preenchida.";    
+                     this.modalIsVisible = true;
+                     return;
+                }  else  {
+                     matricula = this.usuMatriculaLocal.split(" - ")[0];
+                     console.log( this.idOperacao + " || matr =" +  matricula + " -->> lista -> " +  JSON.stringify(  vet ) );
+                }
                 // var lista;
-
                 tam = this.equipamentos.length;
+                console.log("-->> N EQUIPS = " + tam );
+                if ( tam == 0 )              {
+                     this.modalMessage = "Nenhum equipamento selecionado.";
+                     this.modalIsVisible = true;
+                     return;
+                }
                 for  ( var i=0; i<tam; i++ )     
                 {
-                    // console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
+                    console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
                     // console.log( "ID Ope. ==>> " + this.idOperacao );
                     // console.log( "VET AGENTE ==>> " + JSON.stringify( vet[ i ] ) );
+                    if ( this.equipamentos[i].tipo == "Viatura" )   
+                    {
+                        if ( ( this.equipamentos[i].kmIni == null )||( this.equipamentos[i].kmIni == null ) )   { 
+                               this.modalMessage = "Preencha quilometragem inicial.";
+                               this.modalIsVisible = true;
+                               return;
+                        }
+                    }   else {
+                        this.equipamentos[i].kmIni = 0.0;
+                    }
+                    // console.log( i + " || Data = " + this.equipamentos[ i ].idData );
 
-                    if ( this.equipamentos[i].kmIni == null ) 
-                         this.equipamentos[i].kmIni = 0.0;
-                    auxObj    =  {   
+                    if ( this.equipamentos[i].idData == 0 )
+                    {
+                         this.modalMessage = "Preencha todos os campos.";
+                         this.modalIsVisible = true;
+                         return;
+                    }
+                    auxObj = {   
                           idOperacao : this.idOperacao, 
                           dataDevolucao : "0000-00-00",
                           horaDevolucao : "00:00:00",
@@ -569,9 +599,8 @@
                     vet[ i ] = auxObj;
                 }
                 //console.log( JSON.stringify( vet ) );
-
               // 2- CASO ATUALIZANDO O AGENTE, NO HISTÓRICO
-              } else {
+              }    else    {
                 // console.log( this.idOperacao + "||matr =" +  matricula + " --> lista ->" +  JSON.stringify(  vet ));
                 // console.log(" CASO ATUALIZANDO O AGENTE....");
                 matricula = this.usuMatriculaLocal;
@@ -619,8 +648,7 @@
                 operacao: operacaoStr,
                 objeto: { }
             }
-        }  
-        
+        }
 
         for( var i=0; i < vet.length ; i++   )  
         {
@@ -629,24 +657,22 @@
           sendData.dados.objeto = JSON.parse( objAuxStr );  //---- vet[0]; // JSON.stringify( this.vet[0] ).replace( /\\/g, "" ).replace("id", "id_operacao");
           // this.validaNovaLinha( sendData.dados.objeto ); //---- console.log( "objAuxStr = " + objAuxStr );
           
-          //console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+          console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
   
           axios.post(  this.$SERVICES_ENDPOINT_URL , sendData )
-                .then( response => {
-                       //console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
-                       var checkSQLErrorStr = JSON.stringify( response.data ).replace( /\\/g, "" );
-                       //console.log( "Error? " + checkSQLErrorStr.search("ERROR:") );
-                       if ( checkSQLErrorStr.search("ERROR:") != 0 ) 
-                       {
-                          this.modalMessage = "Erro de conexão: banco de dados.";    
-                          this.modalIsVisible = true;
-                          //console.log( "AKIIIIII !!!!!!! ");
-                       }
+               .then( response => {
+                       var data = response.data; // --- --->>> Isso chama o watcher !     
+                       console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
 
-                       var data = response.data; // -->>> Isso chama o watcher !
-                      // console.log("Dados retornados = " +  this.responseData.dados );
-                      /*console.log('-DATA ==>>> ' + JSON.stringify(  response.data )  );
-                        console.log( "MSSG ==>>> " + data.message + "|| code= " + data.code );*/
+                       var checkSQLErrorStr = JSON.stringify( response.data ).replace( /\\/g, "" );
+                       console.log( "Error? " + checkSQLErrorStr.search("ERROR:") );
+                       if ( checkSQLErrorStr.search("ERROR:") >= 0 )              {
+                            console.log("ERRO!");
+                            this.modalMessage = "Erro de conexão: banco de dados.";    
+                            this.modalIsVisible = true;
+                       }
+                       console.log('-DATA ==>>> ' + JSON.stringify(  response.data )  );
+                       console.log("-MSSG ==>>> " + data.message + "|| code= " + data.code );
   
                       if ( data.code == 0 )   
                       {

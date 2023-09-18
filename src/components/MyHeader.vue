@@ -13,7 +13,7 @@
 			</div>
 
 			<div class="header-left-comps d-flex justify-content-end align-items-center">
-				<img class="detran-logo mr-2" src="https://raw.githubusercontent.com/paulovfppiox/policiamento-assets/main/logo-det-horiz.png">
+				<img class="detran-logo mr-2" src="@/assets/detran-logo.png">
 				<b-avatar v-if="showButtonAndAvatar" variant="info" rounded></b-avatar>
 				<div v-if="showButtonAndAvatar" class="user-data">
 					{{ USER_FIRSTNAME }}

@@ -4,8 +4,7 @@
     
    <!-- debug #########################
     formDisabled ? {{ formDisabled }}
-   --> 
-
+   -->
     <my-modal 
       id="myModal" 
       title="Confirmation" 
@@ -17,24 +16,25 @@
       @on-reject-modal="handleRejectModal()"/>
 
     <!-- Dados gerais -->
-    <b-button class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
-        <i class="fa fa-sort"></i> Dados Gerais da Operação
-    </b-button>
+    <div class="btn-container">
+         <b-button class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
+              <i class="fa fa-sort"></i> Dados Gerais da Operação
+         </b-button>
+    </div>
 
-    <b-collapse id="collapse-1" class="mt-2">
+    <b-collapse visible id="collapse-1" class="mt-2">
     <b-card>
 
       <div>
       <b-form inline style="background-color: rgb( 241, 236, 236 );">
-
             <!-- <b-container class="bv-example-row"> -->
             <b-container class="teste">
             <b-row>
-
                 <!-- COL. 1 -->
                 <b-col>
                     <label class="titulo-operacao" for="inline-form-input-name">Nome da Operação: </label>
-                    <b-form-input :disabled="formDisabled" v-model="dadosGeraisOperacao.nomeOperacao" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0"></b-form-input> 
+                    <b-form-input  
+                      placeholder="Insira Nome da Operação" :disabled="formDisabled" v-model="dadosGeraisOperacao.nomeOperacao" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0"></b-form-input> 
                 </b-col>
 
                 <!-- COL. 2 -->
@@ -87,7 +87,9 @@
               <!-- COL. 2 -->
               <b-col>
                   <label class="titulo-operacao" for="inline-form-input-name"> Observações: </label>
-                  <b-form-textarea id="textarea" v-model="dadosGeraisOperacao.observacoes" :disabled="formDisabled" placeholder="Enter something..." rows="3" max-rows="6">
+                  <b-form-textarea 
+                    placeholder="Insira observações necessárias..."
+                    id="textarea" v-model="dadosGeraisOperacao.observacoes" :disabled="formDisabled"  rows="3" max-rows="6">
                   </b-form-textarea>
               </b-col>
           </b-row>
@@ -95,17 +97,18 @@
           <br>
           <b-row> 
                   <!-- Dados gerais -->
-                  <b-button v-if="IS_PAGE_EDITABLE" 
+                  <div class="btn-container">
+                    <b-button v-if="IS_PAGE_EDITABLE" 
                       :disabled="formDisabled" 
                       class="btn-add " variant="primary" 
-                      style="margin-left:510px; width:200px;" 
+                      style="width:200px;" 
                       @click="salvarDadosGerais()">
                         <i class="fa fa-database"></i>
                         {{ salvarBtnName }}
                         
-                        <!-- <div v-if="isAddOperacoesPage">Salvar Operação</div>
-                        <div v-else>Atualizar Operação</div>-->
                   </b-button>
+                  </div>
+                  
           </b-row>              
         </b-container>
       </b-form>
@@ -240,7 +243,7 @@ export default              {
       
       dadosGeraisOperacao : 
       {
-          nomeOperacao: "Insira nome",
+          nomeOperacao: "",
           data: '00-00-0000',
           bairro: null,
           kmIni: '0.0',
@@ -249,7 +252,7 @@ export default              {
           hraIni: null,
           hraFim: null,
           municipio: null,
-          observacoes: "Insira alguma observação."
+          observacoes: ""
       }, 
 
       municipios: [
@@ -409,64 +412,67 @@ mounted() {
       {
           // console.log( "VALID = " + JSON.stringify( this.dadosGeraisOperacao ) );
           if ( ( this.dadosGeraisOperacao.nomeOperacao.length <= 5 ) || 
-              ( this.dadosGeraisOperacao.nomeOperacao == "Insira nome" ) ) 
-              {
+               ( this.dadosGeraisOperacao.nomeOperacao == "Insira nome" ) ) 
+               {
                 this.modalIsVisible = true;
                 this.modalMessage = "Nome operação inválido ou muito curto.";
                 return false;
-          }
+                }
       }
       if ( camposForm.includes( CamposForm.MATRICULA_RESPONSAVEL ) )  
       {
-        if ( this.agenteResponsavel == null )
-        {
-              this.modalIsVisible = true;
-              this.modalMessage = "Matrícula/Responsável inválida.";
-              return false;
-        } else {
-            this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
-            // console.log( "-Matricula = " + this.dadosGeraisOperacao.matriculaResponsavel );
-        }
+          if ( this.agenteResponsavel == null )
+          {
+                this.modalIsVisible = true;
+                this.modalMessage = "Matrícula/Responsável inválida.";
+                return false;
+          } else {
+              this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
+              // console.log( "-Matricula = " + this.dadosGeraisOperacao.matriculaResponsavel );
+          }
       }
       if ( camposForm.includes( CamposForm.DATA ) )  
       {
-        if ( this.dadosGeraisOperacao.data   == "00-00-0000" ) {
+        if ( this.dadosGeraisOperacao.data   == "00-00-0000" )   {
             this.modalIsVisible = true;
             this.modalMessage = "Data da operação não informada.";
             return false;
         }
       }
-      /* if ( this.dadosGeraisOperacao.bairro == null  ) {
+      /* if ( this.dadosGeraisOperacao.bairro == null  )         {
            this.modalIsVisible = true;
            this.modalMessage = "Bairro não informada.";
            return false;
       }*/
       if ( camposForm.includes( CamposForm.KM_INI ) )  
       {
-        if ( this.dadosGeraisOperacao.kmIni  == "0.0" ) {
+        if ( this.dadosGeraisOperacao.kmIni  == "0.0" )          {
             this.modalIsVisible = true;
             this.modalMessage = "Quilometragem inicial não informada.";
             return false;
         }
       } 
-      if ( this.dadosGeraisOperacao.hraIni == null ) {
+      if ( this.dadosGeraisOperacao.hraIni == null )        {
            this.modalIsVisible = true;
            this.modalMessage = "Hora inicial não informada.";
            return false;
       }
-      if ( this.dadosGeraisOperacao.municipio == null ) {
+      if ( this.dadosGeraisOperacao.municipio == null )     {
            this.modalIsVisible = true;
            this.modalMessage = "Município não informado.";
            return false;
       }
       return true;
     },
+    onInput()   
+    {
+      this.$refs.input.style.color = 'red';
+    },
     salvarDadosGerais()
     {  
-     /**** 
-      * if ( !this.validaDadosGerais( [ CamposForm.DATA, CamposForm.MATRICULA_RESPONSAVEL ] ) )
-            return false; 
-      ****/
+     
+      /*if ( !this.validaDadosGerais( [ CamposForm.NOME_OPERACAO, CamposForm.DATA, CamposForm.MATRICULA_RESPONSAVEL ] ) )
+            return false; */
      
       var sendData = {
           dados: {
@@ -666,5 +672,14 @@ table.editable-table td    {
 
 .offset       {
     margin-right: -600px;
+}
+
+.btn-container  {
+  display: flex;
+  justify-content: center;
+}
+
+.inputInit      {
+  color: lightblue;
 }
 </style>

@@ -24,12 +24,11 @@
         <b-card>
           <b-card-header header-tag="header">
             <b-button v-b-toggle="'accordion-' + index" >
-                <i class="fa fa-sort"></i> 
-                <b-avatar variant="info" rounded></b-avatar>
-                {{ item.title }} <!-- - {{ index }} -->
+                <i class="fa fa-sort"></i>  <b-avatar variant="info" rounded></b-avatar> {{ item.title }} <!-- - {{ index }} -->
             </b-button>
-            <button v-if="IS_PAGE_EDITABLE" class="btn btn-link" @click="removeAccordionItem( index )">
-                <i class="fas fa-trash-alt"></i>
+            <!-- -- -- {{ this.hasAgenteBeenSaved( index ) }} -- -- -->
+
+            <button v-if="( IS_PAGE_EDITABLE && !agentesHasSavedBD[ index ] )" class="btn btn-link" @click="removeAccordionItem( index )"> <i class="fas fa-trash-alt"></i>
             </button>
           </b-card-header>
 
@@ -124,7 +123,7 @@
           //console.log("-- usuMatriculas ===>>> " + JSON.stringify( this.usuMatricula ) );
 
           this.nAgentes = matriculas.length;
-          //console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
+          console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
 
           
           for ( var i=0; i<this.nAgentes; i++ )  {
@@ -141,18 +140,25 @@
     created()
     {
       this.getListaAgentes();
-
+ 
+      this.agentesHasSavedBD[0] = false;
+      this.agentesHasSavedBD[1] = false;
+      this.agentesHasSavedBD[2] = false;
+      this.agentesHasSavedBD[3] = false;
+      console.log( "TESTE = " + JSON.stringify( this.agentesHasSavedBD ) );
       
-      if ( this.$route.name == "addOperacoes" ) {
-             this.isAddOperacoesPage = true;
-        } else  {
-            this.isAddOperacoesPage = false;
-        }
-        this.$store.commit( 'setIsPageEditable', this.isAddOperacoesPage );
-        // var str = this.$store.state.isPageEditable;
-        // console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
-        // console.log( "-AppAccordion || isAddOperacoes? " + this.isAddOperacoesPage );
-        // console.log( "accordion - " + JSON.stringify( this.MATRICULAS_VALIDAS ) );
+      if ( this.$route.name == "addOperacoes" ) 
+      {
+           this.isAddOperacoesPage = true;
+      }    else    {
+           this.isAddOperacoesPage = false;
+      }
+      
+      this.$store.commit( 'setIsPageEditable', this.isAddOperacoesPage );
+      // var str = this.$store.state.isPageEditable;
+      // console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
+      // console.log( "-AppAccordion || isAddOperacoes? " + this.isAddOperacoesPage );
+      // console.log( "accordion - " + JSON.stringify( this.MATRICULAS_VALIDAS ) );
     },
     data()       
     {
@@ -240,15 +246,15 @@
                 
           }
       },
-      handleCloseModal()  {
+      handleCloseModal()       {
           //console.log("Close ... ");
           this.modalIsVisible = false;
       },
-      handleAcceptModal() {
+      handleAcceptModal()      {
           //console.log("Accept ... ");
           this.modalIsVisible = false;
       },
-      handleRejectModal() {
+      handleRejectModal()      {
           //console.log("Reject ... ");
           this.modalIsVisible = false;
       },
@@ -258,44 +264,59 @@
           // console.log( "data tst = " + JSON.stringify( tableMatricula ) );
           return tableMatricula;
       },
-      toggleAccordion( index ) {
-        // Toggle the state of the accordion
-        this.$set( this.accordionState, index, !this.accordionState[index] );
+      toggleAccordion( index ) 
+      {
+          // Toggle the state of the accordion
+          this.$set( this.accordionState, index, !this.accordionState[index] );
       },
-      addAccordionItem()    {
-        
-        /*if ( this.idOperacao == null )    {
+      addAccordionItem()       
+      { 
+        /***************
+        if ( this.idOperacao == null )    {
              this.modalIsVisible = true;
              this.modalMessage   = "Dados gerais da operação ainda não foram salvos.";
         } else  {
-            const newItem = {
-              title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
-              content: 'Registros de Entrada/Saída de Equipamentos'
-            }
-            this.accordionItems.push( newItem )
+              const newItem = {
+                title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
+                content: 'Registros de Entrada/Saída de Equipamentos'
+              }
+              this.accordionItems.push( newItem )
          }*/
-         const newItem = {
-              title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
-              content: 'Registros de Entrada/Saída de Equipamentos'
-            }
-            this.accordionItems.push( newItem );
+         const newItem  =  {
+               title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
+               content: 'Registros de Entrada/Saída de Equipamentos'
+         }
+         this.accordionItems.push( newItem );
       },
-
       removeAccordionItem( index )  
       {
-        this.$delete( this.accordionItems, index );
+          // var last = this.accordionItems.pop(); ------ console.log( "ACC? " + JSON.stringify(  last ) );
+          // console.log( JSON.stringify( this.agentesHasSavedB ) + " || index = " + index );
+          this.$delete( this.accordionItems, index );
+          // console.log( "->> Acc. Items: " + JSON.stringify(  this.accordionItems )  );
+
+          for( var i=0; i<this.accordionItems.length; i++ )   {
+               this.accordionItems[i].title = "Agente N° " + ( i + 1 );
+          }
+
+
       },
 
-      /**
-       * updatedData : 1 String formatada em JSON, correspondendo a cada linha da Table
-       * 
-       * SEMPRE QUE HOUVER ATUALIZAÇÃO NA TABELA, RECEBO AQUI OS DADOS 
-       * */  
-      handleDataUpdate( status, index, usuMatricula ) 
-      { 
-          // console.log( "STATUS >>> " + status + " i= " + index + "|| matri = " + usuMatricula[ index ] );
+      /**** updatedData : 1 String formatada em JSON, correspondendo a cada linha da Table
+       * SEMPRE QUE HOUVER ATUALIZAÇÃO NA TABELA, RECEBO AQUI OS DADOS  ****/  
+      handleDataUpdate( status , index , usuMatricula )   
+      {
+          console.log( "-- STATUS >> " + status + " i = " + index + " || matri = " + usuMatricula[ index ] );
           console.log( usuMatricula[ index ] );
           this.agentesHasSavedBD[ index ] = status;
+          console.log( "-LISTA FLAGS >> " + JSON.stringify( this.agentesHasSavedBD ) );
+      },
+      hasAgenteBeenSaved( index )                         
+      {
+          console.log("-- OK" + index );
+          console.log( "-ALL SAVED?? " + JSON.stringify( this.agentesHasSavedBD ) );
+
+          //return this.agentesHasSavedBD[ index ];
       },
 
       /* sendDataToParent()         
@@ -348,10 +369,10 @@
           }*/
         }
     },
-
-    getAgentesLabels()  {
+    getAgentesLabels()  
+    {
       // console.log(  "CHAMOU DATALIST!!! " + this.agentesLabelBD[0] );
-        return this.agentesLabelBD.filter( item => !this.inputMatriculasAtivas.includes( item ) );
+      return this.agentesLabelBD.filter( item => !this.inputMatriculasAtivas.includes( item ) );
     },
 
     async getListaAgentes() 
@@ -388,11 +409,14 @@
 
   <style>
   .btn-add-agente {
-      margin-left: -100px;
+      /*margin-left: -100px;
       padding: 10px;
       display: flex;
       justify-content: center; 
-      align-items: center;
+      align-items: center;*/
+      
+      display: flex;
+      justify-content: center;
   }
   .accordion-content    {
       color: rgb(5, 76, 104);
