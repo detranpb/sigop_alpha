@@ -15,16 +15,16 @@
   <script>
   export default                  {
     name: 'FormDateComp',
-    props:                  {
-        compId:     {
+    props:                   {
+        compId:         {
             type: Number,
             required: true
         },
-        label: {
+        label:          {
             type: String,
             required: true
         },
-        width:           {
+        width:          {
             type: String,
             required: true
         },
@@ -41,16 +41,16 @@
             required: true
         },
     },
-    data() {
+    data()        {
       return {
         date: '',
       };
     },
-    mounted () {
+    mounted ()    {
         this.date = new Date()
     },
     watch: {
-        date () {
+        date ()   {
             //  console.log( 'Ok = ' + this.date );
             this.$emit('updateDate', this.date)
         }

@@ -123,7 +123,7 @@
           //console.log("-- usuMatriculas ===>>> " + JSON.stringify( this.usuMatricula ) );
 
           this.nAgentes = matriculas.length;
-          console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
+          // console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
 
           
           for ( var i=0; i<this.nAgentes; i++ )  {
@@ -145,7 +145,7 @@
       this.agentesHasSavedBD[1] = false;
       this.agentesHasSavedBD[2] = false;
       this.agentesHasSavedBD[3] = false;
-      console.log( "TESTE = " + JSON.stringify( this.agentesHasSavedBD ) );
+      // console.log( "TESTE = " + JSON.stringify( this.agentesHasSavedBD ) );
       
       if ( this.$route.name == "addOperacoes" ) 
       {
@@ -306,17 +306,17 @@
        * SEMPRE QUE HOUVER ATUALIZAÇÃO NA TABELA, RECEBO AQUI OS DADOS  ****/  
       handleDataUpdate( status , index , usuMatricula )   
       {
-          console.log( "-- STATUS >> " + status + " i = " + index + " || matri = " + usuMatricula[ index ] );
+          //console.log( "-- STATUS >> " + status + " i = " + index + " || matri = " + usuMatricula[ index ] );
           console.log( usuMatricula[ index ] );
           this.agentesHasSavedBD[ index ] = status;
-          console.log( "-LISTA FLAGS >> " + JSON.stringify( this.agentesHasSavedBD ) );
+          //console.log( "-LISTA FLAGS >> " + JSON.stringify( this.agentesHasSavedBD ) );
       },
       hasAgenteBeenSaved( index )                         
       {
-          console.log("-- OK" + index );
-          console.log( "-ALL SAVED?? " + JSON.stringify( this.agentesHasSavedBD ) );
+          //console.log("-- OK" + index );
+          //console.log( "-ALL SAVED?? " + JSON.stringify( this.agentesHasSavedBD ) );
 
-          //return this.agentesHasSavedBD[ index ];
+          return this.agentesHasSavedBD[ index ];
       },
 
       /* sendDataToParent()         

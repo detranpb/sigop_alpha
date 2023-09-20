@@ -19,17 +19,17 @@ import './styles/global.css';
 import MyHeader from './components/MyHeader';
 import MyFooter from './components/MyFooter';
 
-export default      {
+export default                  {
     name: 'App',
-    components: {
-      MyHeader,
-      MyFooter,
+    components:   {
+        MyHeader,
+        MyFooter,
     },
-    data() {
-      return {
-        userIsLoggedIn: false,
-        modalIsVisible: false
-      }
+    data()            {
+        return {
+          userIsLoggedIn: false,
+          modalIsVisible: false
+        }
     },
     created()		      {
         this.checkAuthentication();

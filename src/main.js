@@ -57,8 +57,7 @@ new Vue({
     router,
     store,
 }).$mount('#app')
-
-
+ 
 /*new Vue({
   el: '#app',
   components: { App },

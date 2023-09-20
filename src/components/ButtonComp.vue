@@ -1,3 +1,12 @@
+<!--
+USAGE EXAMPLES:
+
+<ButtonComp :comp-id="BTN02"  variant-value="success" text="BOTAO 2" width="80px" @onClick="onButtonClick" v-if="true" />
+<ButtonComp 
+           :comp-id="BTN03" variant-value="success" text="BOTAO 2" width="80px" @onClick="onButtonClick" v-if="true" 
+           :toggle-data = "{ toogle: true, toggleName: 'accordion-' + index }"/>/>
+-->
+
 <template>
     
     <div v-if="toggleData.toggle">

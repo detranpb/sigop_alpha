@@ -75,6 +75,8 @@
               </div>
           </div>
           
+          <custom-input v-model="textInput"></custom-input>
+
           <b-form>
             <b-form-group label="Matrícula" label-for="email">
                 <b-form-input
@@ -155,7 +157,6 @@
     </b-row>
 </main>
   </template>
-   
   <script>
   import emailjs from '@emailjs/browser';
   import axios from 'axios';
