@@ -1,5 +1,5 @@
 <template>
-  <b-modal v-model="computedVisible" :id="id">
+  <b-modal v-model="computedVisible" :id="id" style="z-index: 999999"> 
     <template v-slot:modal-header="{ title }">
       <h5> {{ title }} </h5>
       <b-button size="sm" variant="outline-danger" @click="onCloseModal()"> Fechar </b-button>

@@ -9,22 +9,21 @@
             <b-form-select v-model="equipSelecionado" :options="equipOpcoes"></b-form-select>
         </div>
 
-        <b-button variant="success" @click="onModalClose()">
+        <b-button size="sm" variant="success" @click="onModalClose()">
             <i class="fas fa-plus"></i> Adicionar Equipamento
         </b-button>
       </b-modal>
   
-      <my-modal id="myModal" title="Confirmação" :message="modalMessage" 
-          :visible="modalIsVisible"
-          @update:visible="modalIsVisible = $event"
-          @on-close-modal="handleCloseModal()"
-          @on-accept-modal="handleAcceptModal()"
-          @on-reject-modal="handleRejectModal()"
-       ></my-modal>
+      <!--<my-modal id="myModal" title="Confirmação" :message="modalMessage" 
+          :visible="modalIsVisible" @update:visible="modalIsVisible = $event"
+          @on-close-modal="handleCloseModal()" @on-accept-modal="handleAcceptModal()" @on-reject-modal="handleRejectModal()"
+       ></my-modal>-->
       
-      <div class="btn-add-equip">
-        <b-button v-if="IS_PAGE_EDITABLE && !hasSavedOnDatabase" class="btn-add" variant="success" @click="showModal()">
-          <i class="fas fa-plus"></i> Selecionar Equipamentos
+      <div class="btn-add">
+        <b-button size="sm" 
+            style="width: 200px"
+            v-if="IS_PAGE_EDITABLE && !hasSavedOnDatabase" class="btn-add" variant="success" @click="showEquipamentosModal()">
+               <i class="fas fa-plus"></i> Selecionar Equipamentos
         </b-button>
       </div>
 
@@ -47,7 +46,7 @@
             <b-form-input 
                 class="mx-auto"
                 placeholder="Insira ID."
-                style="width: 120px" 
+                style="width: 130px" 
                 type="text"
                 autocomplete="off" 
                 :list="getDatalistId(equip.tipo)" 
@@ -55,55 +54,73 @@
                 @blur="validaEquipamentoID( equip )"
                 :disabled="( !isAddOperacoesPage || hasSavedOnDatabase )"> <!-- CASO PAG EDITÁVEL + FOI SALVO ON BD -->
             </b-form-input>
+
             <datalist :id="getDatalistId(equip.tipo)">
-              <option v-for="option in getFilteredDatalistOptions( equip.tipo )" :value="option" :key="option">{{ option }}</option>
+                <option v-for="option in getFilteredDatalistOptions( equip.tipo )" :value="option" :key="option">{{ option }}</option>
             </datalist>
             
             <div v-if="( equip.tipo == 'Viatura' )">
-              <div style="font-size: 12px;padding-top: 5px;"><b> Km Inicial: </b></div>
-              <knob-control 
-                  v-if="( equip.tipo == 'Viatura' )"
-                  :disabled="isComponentDisabled()"
-                  :value-display-function="velocimentoIniLabel"
-                  v-model="equip.kmIni"
-                  size="80"
-                  stepSize="10.5"
-                  :min="0"
-                  :max="5000"
-                  :stroke-width="8"
-              />
-              <div v-if="( ( equip.tipo == 'Viatura' ) && (!isAddOperacoesPage) )"
-              style="font-size: 12px;padding-top: 5px;"><b> Km Final: </b></div>
-              <knob-control 
-                  v-if="( ( equip.tipo == 'Viatura' ) && (!isAddOperacoesPage) )"
-                  :disabled="isComponentDisabled()"
-                  :value-display-function="velocimentoFimLabel"
-                  v-model="equip.kmFim"
-                  size="80"
-                  stepSize="10.5"
-                  :min="0"
-                  :max="5000"
-                  :stroke-width="8"
-              />
-              <!-- kmInicial ===> {{ equip.kmIni }}
-                   kmFinal   ===> {{ equip.kmFim  }} -->
-            </div>
+                <div class="labels" style="padding-top: 10px;"> Km Inicial: </div>
+                <b-form-input
+                     type="text"
+                     class="mx-auto"
+                     v-if="( equip.tipo == 'Viatura' )"
+                     :disabled="isComponentDisabled()" 
+                     v-model="equip.kmIni"
+                     style="width: 130px;"
+                     lazy-formatter
+                     :formatter="formatKm" />
 
-            <!-- Botão LIXO -->
-            <button class="btn btn-link" 
-              @click="removeEquipComponent( equip.id )"
-              :disabled="isComponentDisabled()">
-              <i class="fas fa-trash-alt"></i>
-            </button>
+                <!--<knob-control 
+                    v-if="( equip.tipo == 'Viatura' )"
+                    :disabled="isComponentDisabled()" :value-display-function="velocimentoIniLabel"
+                    v-model="equip.kmIni"  size="80"  stepSize="10.5"
+                    :min="0" :max="5000" :stroke-width="8"
+                />-->
+                <div v-if="( ( equip.tipo == 'Viatura' ) && (!isAddOperacoesPage) )"
+                     class="labels mx-auto"> Km Final: </div>
 
-            <div v-if="!isAddOperacoesPage && !isComponentDisabled()" class="align-bottom">
-                 <label class="titulo-operacao" for="example-datepicker"> Data de Devolução: </label>
-                 <b-form-datepicker id="example-datepicker"  v-model="equip.dataDevolucao" class="mb-2"  style="width:200px"></b-form-datepicker>
-                 <label class="titulo-operacao" for="inline-form-input-name" > Horário de Devolução: </label><br>
-                 <b-form-timepicker v-model="equip.horaDevolucao" locale="pt" style="width:200px"></b-form-timepicker>
-            </div>
-            
-            
+                <b-form-input 
+                     v-if="( ( equip.tipo == 'Viatura' ) && (!isAddOperacoesPage) )"
+                     :disabled="isComponentDisabled()" 
+                     v-model="equip.kmFim"
+                     style="width: 130px;"
+                     class="mx-auto" 
+                     lazy-formatter
+                     :formatter="formatKm"/>
+
+                <!--<knob-control 
+                    v-if="( ( equip.tipo == 'Viatura' ) && (!isAddOperacoesPage) )"
+                    :disabled="isComponentDisabled()"
+                    :value-display-function="velocimentoFimLabel"
+                    v-model="equip.kmFim"
+                    size="80"
+                    stepSize="10.5"
+                    :min="0"
+                    :max="5000"
+                    :stroke-width="8"
+                />-->
+                <!-- kmInicial ===> {{ equip.kmIni }}
+                    kmFinal   ===> {{ equip.kmFim  }} -->
+              </div>
+
+              <!-- Botão LIXO -->
+              <button class="btn btn-link" 
+                      @click="removeEquipComponent( equip.id )"
+                      :disabled="isComponentDisabled()">
+                    <i class="fas fa-trash-alt"></i>
+              </button>
+
+              <div class="data-container">
+                   <div v-if="!isAddOperacoesPage && !isComponentDisabled()" class="align-bottom">
+                        <label class="labels" for="example-datepicker"> Data de Devolução: </label>
+                        <b-form-datepicker v-model="equip.dataDevolucao" class="mb-2"  style="width:200px"></b-form-datepicker>
+                        <label class="labels" for="inline-form-input-name" > Horário de Devolução: </label><br>
+                        <!--  b-form-timepicker v-model="equip.horaDevolucao" locale="pt" style="width:200px"></b-form-timepicker>-->
+                        <input style="width:200px; margin:5px;" class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control" type="time" v-model="equip.horaDevolucao"/>
+                   </div>
+              </div>
+              
           </div>
           </div>
     <br>
@@ -121,6 +138,7 @@
     -->
 
       <b-button
+        size="sm"
          v-if="IS_PAGE_EDITABLE && !hasSavedOnDatabase" 
          class="btn-add" variant="primary" 
          @click="cadastrarAgenteBD()"
@@ -130,14 +148,14 @@
       </b-button>
   </div>
   </template>
-  
   <script>
+  import UtilsMixin  from '@/utils/UtilsMixin.js' //--- SE ASSEMELHA A HERANÇA
+// import { FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
   import axios       from 'axios';
-  import MyModal     from '@/components/MyModal.vue';
   import { BButton } from "bootstrap-vue";
-  import KnobControl from 'vue-knob-control';
   export default 
   {
+    mixins: [UtilsMixin],
     props: 
     {
       compTableItens:[],
@@ -151,9 +169,9 @@
     name: 'AppEquipamentosGrid',
     
     components:     {
-      MyModal,
+      //MyModal,
       BButton,
-      KnobControl,
+      // KnobControl,
     },
     watch:          { 
         usuMatricula( newValue )         
@@ -168,12 +186,19 @@
         IS_PAGE_EDITABLE()  {
             return this.$store.state.isPageEditable;
         }, 
+         
     },
+    
+    
+  
     /* Realiza montagem do componente caso seja leitura/Busca Histórico, com base no properties passado*/
     created() 
     {
         // alert( "E = " + JSON.stringify( this.equipamentosBD ) );   
         // console.log( "Create Table where?? >> " + this.$route.name );
+
+        //const number = 123456.789;
+        
         
         if ( this.$route.name == "addOperacoes" )   {
              this.isAddOperacoesPage = true;
@@ -282,6 +307,18 @@
       };
     }, 
     methods:     {
+      formatKm( value )
+      {    
+        // alert( value );
+        var newValue = new Intl.NumberFormat("pt-PT", {
+            style: "unit",
+            unit: "kilometer",
+            minimumFractionDigits: 3,
+            maximumFractionDigits: 3,
+          }).format( value ).replace(" km", "");
+          // console.log( "kmIni = " + newValue );
+          return newValue;
+      },
       isComponentDisabled()
       {
         /**** Caso (não editavel/pág. sem ser Add) OU (salvo no BD)... desabilitar ****/
@@ -315,14 +352,14 @@
           this.modalIsVisible = false;
           this.modalMessage = "d";
       },
-      showModal()           {
+      showEquipamentosModal()           {
           this.mVisible = true;
       },
       onModalClose()        {
           // console.log('Selected Option:', this.equipSelecionado );
           if ( this.equipSelecionado == "Todos" ) 
           {
-              for( var i=0; i<4; i++ )    {
+              for( var i=0; i<5; i++ )    {
                    //console.log( "i = " + i + "] " + this.equipOpcoes[i] );
                    this.equipSelecionado = this.equipOpcoes[i];
                    this.addEquipComponent();
@@ -376,24 +413,27 @@
       {
         // console.log( "LISTA EQUIPS =>> " + JSON.stringify( this.LISTA_EQUIPAMENTOS_SELECIONADOS ) );
         //console.log( "-->> kmInicial = " + this.kmInicial );
+        var hasViatura;
+        var isViatura = ( this.equipSelecionado == 'Viatura' );
 
         if ( this.equipamentos.length >= this.LIMITE_EQUIPAMENTOS ) 
         {
-             this.modalMessage   = "Limite de equipamentos atingido.";  
-             this.modalIsVisible = true;
+             /*** this.modalMessage   = "Limite de equipamentos atingido.";  
+             this.modalIsVisible = true; ***/
+             this.showModal( "Limite de equipamentos atingido." );
              return;
         }
         
         this.getEquipamentosBD( this.equipSelecionado );
-        if ( this.equipSelecionado == 'Viatura' ) 
+        if ( isViatura ) 
         {
              const hasViatura = this.equipamentos.some(equip => equip.tipo === 'Viatura');
              if ( hasViatura ) 
              {
-                 this.modalMessage   = "Viatura já inserida para este Agente.";  
-                 this.modalIsVisible = true;
-                 return;
-             }
+                 /* this.modalMessage   = "Viatura já inserida para este Agente.";  
+                    this.modalIsVisible = true; */
+                 this.showModal( "Viatura já inserida para este Agente." );
+             }  
         }
         const equipamento   =   {
               id: this.equipamentos.length + 1,
@@ -405,7 +445,8 @@
               kmIni: null,
               kmFim: null
         };
-        this.equipamentos.push( equipamento );
+        if ( ( ( isViatura ) && ( !hasViatura ) ) || ( !isViatura ) )
+                 this.equipamentos.push( equipamento );
       },
       validaEquipamentoID( equipamentoObj ) 
       {
@@ -430,10 +471,11 @@
 
          if ( !isValid ) 
          {
-            this.modalIsVisible = true;
-            this.modalMessage = msg;
+              /*this.modalIsVisible = true;
+              this.modalMessage = msg;*/
+              this.showModal( msg );
           }    else   {
-            this.inputEquipIDAtivos.push( equipamentoObj.idData );
+              this.inputEquipIDAtivos.push( equipamentoObj.idData );
           }
          // console.log( "-->> C  === " + isValid );
          
@@ -542,9 +584,11 @@
             if ( this.isAddOperacoesPage )    
             {
                 // console.log("-- MATRICULA ==>>> " + this.usuMatriculaLocal );
+
                 if ( this.usuMatriculaLocal == null )   {
-                     this.modalMessage = "Matrícula não preenchida.";    
-                     this.modalIsVisible = true;
+                     /**this.modalMessage = "Matrícula não preenchida.";    
+                     this.modalIsVisible = true;*/
+                     this.showModal( "Matrícula não preenchida." );
                      return;
                 }  else  {
                      matricula = this.usuMatriculaLocal.split(" - ")[0];
@@ -555,8 +599,9 @@
                 // console.log("-->> N EQUIPS = " + tam );
 
                 if ( tam == 0 )              {
-                     this.modalMessage = "Nenhum equipamento selecionado.";
-                     this.modalIsVisible = true;
+                     /** this.modalMessage = "Nenhum equipamento selecionado.";
+                     this.modalIsVisible = true;**/
+                     this.showModal( "Nenhum equipamento selecionado." );
                      return;
                 }
                 for  ( var i=0; i<tam; i++ )     
@@ -567,8 +612,9 @@
                     if ( this.equipamentos[i].tipo == "Viatura" )   
                     {
                         if ( ( this.equipamentos[i].kmIni == null )||( this.equipamentos[i].kmIni == null ) )   { 
-                               this.modalMessage = "Preencha quilometragem inicial.";
-                               this.modalIsVisible = true;
+                               /* this.modalMessage = "Preencha quilometragem inicial.";
+                               this.modalIsVisible = true;*/
+                               this.showModal( "Preencha quilometragem inicial." );
                                return;
                         }
                     }    else    {
@@ -578,8 +624,9 @@
 
                     if ( this.equipamentos[i].idData == 0 )
                     {
-                         this.modalMessage = "Preencha todos os campos.";
-                         this.modalIsVisible = true;
+                         /* this.modalMessage = "Preencha todos os campos.";
+                         this.modalIsVisible = true;*/
+                         this.showModal( "Preencha todos os campos." );
                          return;
                     }
                     auxObj = {   
@@ -609,10 +656,10 @@
                 matricula = this.usuMatriculaLocal;
                 tam = this.equipamentos.length;
 
-                for  (i=0; i<tam; i++ )     
+                for  ( i=0; i < tam; i++ )     
                 {
                     // console.log( "i[ " + i + "] =>> " + JSON.stringify( this.equipamentos[i] ));
-                    auxObj    =  {   
+                    auxObj = {   
                           idOperacao : this.idOperacao, 
                           dataDevolucao : this.equipamentos[i].dataDevolucao,
                           horaDevolucao : this.equipamentos[i].horaDevolucao,
@@ -634,7 +681,29 @@
               }
               this.cadastrarAgenteBD_LEGADO( vet );
 
-      }, // - FECHA cadastrarAgenteBD
+      }, 
+      convertKmToFloat( inputString )                              {
+          // Remove spaces from the input string
+          // const stringWithoutSpaces = inputString.replace(/\\s/g, '');
+          // alert( "-INPUT ?? " + inputString + " || tipo ??" + typeof inputString );
+          /* var stringWithoutSpaces = inputString.replace(/\s/g, '');
+          alert( "-stringWithoutSpaces = " + stringWithoutSpaces );
+
+          // Replace the comma with a period (for decimal separator)
+          const stringWithDecimalPoint = stringWithoutSpaces.replace( ',', '.' );*/
+
+          const stringWithDecimalPoint = inputString.replace(/\u00A0/g, '').replace(',', '.');
+
+          //alert( "-stringWithDecimalPoint = " + stringWithDecimalPoint );
+
+          // Parse the resulting string to a float
+          const resultFloat = parseFloat( stringWithDecimalPoint );
+
+          //alert( "-resultFloat = " + resultFloat );
+
+          return resultFloat;
+      },
+      // - FECHA cadastrarAgenteBD
       cadastrarAgenteBD_LEGADO( vet )             
       {
         // this.modalIsVisible = true;
@@ -645,46 +714,57 @@
         if ( this.isAddOperacoesPage )  operacaoStr = "cadastrar";
         else operacaoStr = "atualizar";
 
-        var sendData = {
-            dados: {
+        var sendData  =  {
+            dados:    {
                 entidade: 'usoEquipamento',
                 operacao: operacaoStr,
-                objeto: { }
+                objeto: {}
             }
         }
 
         for( var i=0; i < vet.length ; i++   )  
         {
-          var objAuxStr = JSON.stringify( vet[i] ).replace( /\\/g, "" );
-          // console.log( "objAuxStr = " + objAuxStr );
+          if ( vet[i].kmIni > 0 )
+               vet[i].kmIni = this.convertKmToFloat( vet[i].kmIni );
+
+          if ( ( !this.isAddOperacoesPage ) && ( vet[i].kmFim > 0 ) )
+                vet[i].kmFim = this.convertKmToFloat( vet[i].kmFim );
+
+          var objAuxStr = JSON.stringify( vet[i] ).replace( /\\/g, "" ); 
           sendData.dados.objeto = JSON.parse( objAuxStr );  //---- vet[0]; // JSON.stringify( this.vet[0] ).replace( /\\/g, "" ).replace("id", "id_operacao");
           // this.validaNovaLinha( sendData.dados.objeto ); //---- console.log( "objAuxStr = " + objAuxStr );          
-          // console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+          console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
   
           axios.post(  this.$SERVICES_ENDPOINT_URL , sendData )
                .then( response => {
+                       var msg;
+
                        var data = response.data; // --- --->>> Isso chama o watcher !     
                        // console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
 
                        var checkSQLErrorStr = JSON.stringify( response.data ).replace( /\\/g, "" );
-                       // console.log( "Error? " + checkSQLErrorStr.search("ERROR:") );
-                       if ( checkSQLErrorStr.search("ERROR:") >= 0 )              {
-                            // console.log("ERRO!");
-                            this.modalMessage = "Erro de conexão: banco de dados.";    
-                            this.modalIsVisible = true;
-                       }
+                       // console.log( "Error? " + checkSQLErrorStr.search("ERROR") );
+                       
+                       if ( checkSQLErrorStr.search("ERROR") == 1 )
+                            msg = "Erro de conexão com banco de dados";
+                       
                        /** console.log('-DATA ==>>> ' + JSON.stringify(  response.data )  );
                         *  console.log("-MSSG ==>>> " + data.message + "|| code= " + data.code ); **/
-  
+                        
                       if ( data.code == 0 )   
                       {
-                        this.hasSavedOnDatabase = true;
+                        /** Caso cadastro, seta variável, para informar aos INPUTs serem desabilitados. No histórico/consultas não precisa isso. */
+                        if ( this.isAddOperacoesPage )
+                             this.hasSavedOnDatabase = true;
+
+                        msg = data.message;
                         this.sendStatusToParent();
                         // console.log( "ID = " + data.data.id );
                         // this.idValue = data.data.id;
                       }
-                      this.modalMessage = data.message;
-                      this.modalIsVisible = true;
+                      /* this.modalMessage = data.message;
+                      this.modalIsVisible = true;*/
+                      this.showModal( msg );
                 })
                 .catch(error => {
                       this.error = error.message;
@@ -759,9 +839,10 @@
     align-items: center;
   }
   .btn-add                {
-      margin-right: 40%;
-      margin-left: 40%;
       width: 200px;
+      display: flex;
+      justify-content: center; 
+      align-items: center;
   } 
 
   .legenda-tabela {
@@ -797,7 +878,7 @@
   /** Auto-height **/
   height: auto;
   display: inline-block; /* Ensures the div shrinks to fit its content */
-  overflow: hidden; /* Hides any content that overflows the div */
+  /*overflow: hidden;  Hides any content that overflows the div */
 }
 
 .image-column       {
@@ -808,7 +889,7 @@
     /** Auto-height **/
     height: auto;
     display: inline-block; /* Ensures the div shrinks to fit its content */
-    overflow: hidden; /* Hides any content that overflows the div */
+    /* overflow: hidden; Hides any content that overflows the div */
 }
 
 .image-wrapper            {
@@ -840,7 +921,11 @@
 .align-bottom           {
     margin-top: auto;
     text-align: center;
-    padding-left: 40px;
+}
+.data-container           {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .titulo-operacao        {
@@ -848,5 +933,11 @@
     font-size: 15px;
     text-align: center;
     font-weight: bold;
-  }
+}
+
+.labels   {
+  color: rgb(0, 0, 0);
+  font-size: 13px;
+  font-weight: bold;
+} 
 </style>

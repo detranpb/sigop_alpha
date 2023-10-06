@@ -58,6 +58,7 @@
     {
       // this.authenticationControl();
       this.$store.commit('setIsPageEditable', true );
+      this.newTab();
     },
     methods: 
     { 

@@ -9,7 +9,7 @@ import AddOperacoes from '@/pages/AddOperacoes';
 import HistoricoOperacoes from '@/pages/HistoricoOperacoes';
 import HistoricoEquipamentos from '@/pages/HistoricoEquipamentos';
 import RelatoriosOperacoes from '@/pages/RelatoriosOperacoes';
-import TestComponents from '@/pages/TestComponents';
+import AddRelatorioOperacao from '@/pages/AddRelatorioOperacao';
 import AppHome from '@/pages/AppHome';
 
 const routes = [
@@ -48,12 +48,12 @@ const routes = [
         path:'/historico-equipamentos',
         name: 'historicoEquipamentos',
         component:HistoricoEquipamentos
-    },
+    }, 
     {
-        path:'/test-components',
-        name: 'testComponents',
-        component:TestComponents
-    },
+        path:'/add-relatorio-operacao',
+        name: 'addRelatorioOperacao',
+        component:AddRelatorioOperacao
+    }, 
     {
         path: '/',
         redirect: '/login', // Redirect to the login page by default

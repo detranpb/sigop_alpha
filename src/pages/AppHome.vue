@@ -10,7 +10,8 @@
     <br>
     <br>
 
-    <b-container class="bv-example-row" style="background-color: rgb(213, 218, 219);height: 60%;" >
+  
+    <b-container v-if="!this.$IS_MOBILE_APP" class="bv-example-row" style="background-color: rgb(213, 218, 219);height: 60%;" >
     <b-row>
       <br>
       <br>
@@ -40,8 +41,7 @@
 <script>
 import Chart from 'chart.js/auto';
 import MyModal from '@/components/MyModal.vue';
-
-// import AppDashboard from '@/components/AppDashboard.vue';
+ // import AppDashboard from '@/components/AppDashboard.vue';
 import axios from 'axios';
 export default      
 {
@@ -57,8 +57,12 @@ export default
           listaAgentes: [],
       }
   },
-  mounted()     {
-
+  mounted()       
+  {
+   
+    if ( this.$IS_MOBILE_APP )  {
+         this.$router.push({ path:'/add-relatorio-operacao', replace:true });
+    }
     const CHART_COLORS = {
       red: 'rgb(255, 99, 132)',
       orange: 'rgb(255, 159, 64)',
@@ -80,7 +84,7 @@ export default
           {
             data: [12, 19, 3, 5, 2, 3],
             backgroundColor: [
-              'rgb(01, 128, 255)',
+              'rgb(01, 128, 1)',
               'rgb(50, 99, 122)',
               'rgb(200, 59, 132)',
               'rgb(155, 159, 64)',
@@ -149,7 +153,6 @@ export default
     
 
     // ################################################################
-    
     const dataLine = {
     labels: [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul' ],
     datasets: [
@@ -276,8 +279,6 @@ export default
   }
 }
 </script>
-
-
 <style>
 .heading{
   text-align: center;

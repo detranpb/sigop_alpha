@@ -1,68 +1,84 @@
 <template>
   <div id="app">
-      <my-modal id="myModal" message="Página não autorizada. Acesso restrito." 
-            :visible="modalIsVisible"
+      <my-modal id="myModal" 
+            :message="appModalMessage" 
+            :visible="appModalIsVisible"
             @on-close-modal="handleCloseModal()"
             @on-accept-modal="handleAcceptModal()"
             @on-reject-modal="handleRejectModal()">
       </my-modal>
-
+      
       <MyHeader/>
-      <router-view path="$router.key"/>
+           <router-view path="$router.key"/>
       <MyFooter/>
   </div>
 </template>
-
 <script>
+
 import './styles/global.css';
+import MyHeader   from './components/MyHeader';
+import MyFooter   from './components/MyFooter';
+import UtilsMixin from '@/utils/UtilsMixin.js' // --- SE ASSEMELHA A HERANÇA
 
-import MyHeader from './components/MyHeader';
-import MyFooter from './components/MyFooter';
-
-export default                  {
+export default                  
+{
     name: 'App',
-    components:   {
+    mixins: [ UtilsMixin ],
+    components:       {
         MyHeader,
         MyFooter,
     },
     data()            {
         return {
           userIsLoggedIn: false,
-          modalIsVisible: false
+          appModalIsVisible: false,
+          appModalMessage: "Página não autorizada. Acesso restrito."
         }
     },
-    created()		      {
+    created()		                {
         this.checkAuthentication();
     },
-    updated() 	      {
+    updated() 	                    {
         this.checkAuthentication();
+        // alert( "-PAGE: " + this.$route.name );
+        // this.getDataOnUpdatePageAPI();
     },
-    computed:   {
+    computed:                       {
       isLoggedIn() {
           return this.userIsLoggedIn
       }
     },
+    mounted()       {
+        this.$root.$on('showModal', ( modalMsg ) => {
+            this.appModalIsVisible = true;
+            this.appModalMessage = modalMsg;
+        })
+    },
     methods:    {
+        
         handleLoginResult( { loginResult } )  {
             this.userIsLoggedIn = loginResult;
         },
-        handleCloseModal()              {
-            this.modalIsVisible = false;
+        /*appTeste()             {
+            console.log( "appTESTE !!!! !!!! !!!! " );
+        },*/
+        handleCloseModal()     {
+            this.appModalIsVisible = false;
         },
-        checkAuthentication()           {
+        checkAuthentication()  {
             
-            // console.log("- Page name = " + this.$route.name  );
+            console.log("- Page name = " + this.$route.name  );
             const cookieAuth = this.$cookies.get('isAuthenticated');
-            // console.log( "-Cookie? " + cookieAuth );
+            console.log( "-Cookie? " + cookieAuth );
             
               if ( this.$route.name != "appLogin" )      {
-                  if ( ( cookieAuth == false )||( cookieAuth == null ) )       {
+                   /*** if ( ( cookieAuth == false )||( cookieAuth == null ) )       {
                         this.$router.push({
                           path: '/login',
                           replace: true // reload page
                         });
                         this.modalIsVisible = true;
-                  }
+                   }***/
               }
         }
     }

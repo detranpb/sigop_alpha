@@ -1,7 +1,7 @@
 <template>
     <main  style="background-color: rgba(236, 245, 243, 0.89);">
-    <!-- Add the style and icon you want using the String format -->
-    <!--<font-awesome-icon icon="fa-solid fa-user-secret" /> -->
+    <!-- -- Add the style and icon you want using the String format -- -->
+    <!-- <font-awesome-icon icon="fa-solid fa-user-secret" /> -->
 
     <b-modal v-model="modSenhaVisible" @hide="onCriaSenhaModalClose" hide-footer>
         <div class="modal-header">
@@ -74,9 +74,8 @@
                   <h4> Login </h4>
               </div>
           </div>
-          
-          <custom-input v-model="textInput"></custom-input>
 
+          <custom-input v-model="textInput"></custom-input>
           <b-form>
             <b-form-group label="Matrícula" label-for="email">
                 <b-form-input
@@ -131,7 +130,7 @@
       </b-col>
 
       <!-- COLUNA SEGUNDA-->
-      <b-col sm="7" style="background-color: rgba(236, 245, 243, 0.89);">
+      <b-col v-if="!this.$IS_MOBILE_APP" sm="7" style="background-color: rgba(236, 245, 243, 0.89);">
       <div>
             <b-carousel id="carousel-fade" style="text-shadow: 0px 0px 2px #000" fade indicators :interval="4000">
               <b-carousel-slide
@@ -158,21 +157,23 @@
 </main>
   </template>
   <script>
-  import emailjs from '@emailjs/browser';
-  import axios from 'axios';
-  import MyModal from '@/components/MyModal.vue';
+  import emailjs    from '@emailjs/browser';
+  import axios      from 'axios';
+  import MyModal    from '@/components/MyModal.vue';
   //import authStore from '@/store/auth'; // Import your authentication store
+  import SIGOP_API  from '@/services/SIGOP_API.js'
+  import ApiService from '@/services/ApiService.js';
 
-  export default {
+  export default        {
     components: {
       MyModal
     },
     name: 'AppLogin',
     data()    
     {
-      return      {
-
-          MATRICULAS_AUTORIZADAS: [ "555", "42641", "42579", "42218", "42731", "42005", "42277" ],
+      return        {
+          time : '00:00:00',
+          MATRICULAS_AUTORIZADAS: [ "555", "42641", "42579", "42218", "42731", "42005", "42277", "22900" ],
 
           modSenhaVisible: false,
           modalIsVisible: false,
@@ -200,20 +201,32 @@
           novaSenha: 0,
       }
     },
+    mounted()           {
+        this.$root.$emit("appTeste");
+    }, 
     computed:  
     {
-        PASSWORD_TYPE()     {
-             return this.isSenhaVisivel ? 'text' : 'password';
-        },
+        PASSWORD_TYPE() {
+            return this.isSenhaVisivel ? 'text' : 'password';
+        } 
     },
-    created()   
+    async created()   
     {
-      // var isAuth = localStorage.getItem('isAuthenticated');
-      // console.log( "LOGIN Created | isAuth? = " + isAuth );
-      /*console.log("KLKL");
-      this.$router.history.listen( (newLocation) => {
-        console.log( newLocation.path );
-      })*/ 
+        const data = await ApiService.getInstance().getAgentesLabels();
+        console.log( data );
+        /*{ async () => { 
+          return await ApiService.getInstance().getData();
+        } };*/
+        
+        /** await ApiService.getInstance().getAgentesLabels();
+        console.log("-- TESTE = " + this.TESTE );**/
+
+        // --- var isAuth = localStorage.getItem('isAuthenticated'); ---
+        // console.log( "LOGIN Created | isAuth? = " + isAuth );
+        /*** console.log("KLKL");
+        this.$router.history.listen( (newLocation) => {
+          console.log( newLocation.path );
+        }) ***/ 
     },
     methods:      {
       openCriaSenhaModal( flag )          
@@ -229,35 +242,35 @@
           }
           this.modSenhaVisible = true;
       },
-      onCriaSenhaModalClose()             {
+      onCriaSenhaModalClose()         {
           this.modSenhaVisible = false;
           this.formPrimeiroAcesso.msgStatus = " "; 
           this.isValid = -1;
       },
-      onModalClose()                      {
+      onModalClose()                  {
           this.modalSenhaVisible = false;
       },
-      handleCloseModal()                  {
+      handleCloseModal()              {
           this.modalIsVisible = false;
           this.modalMessage = "x";
       },
-      handleAcceptModal()                 {
+      handleAcceptModal()             {
           // console.log("Accept ... ");
           this.modalIsVisible = false;
           this.modalMessage = "y";
       },
-      handleRejectModal()                 {
+      handleRejectModal()             {
           // console.log("Reject ... ");
           this.modalIsVisible = false;
           this.modalMessage = "d";
       },
-      cifraSenha( text )                  {
+      cifraSenha( text )              {
           var secretKey = "PAULO";
           const keyLength = secretKey.length;
           const encryptedText = [];
-          for (let i = 0; i < text.length; i++) {
-            const encryptedCharacter = text.charCodeAt(i) ^ secretKey.charCodeAt(i % keyLength);
-            encryptedText.push(encryptedCharacter);
+          for ( let i = 0; i < text.length; i++ )     {
+                const encryptedCharacter = text.charCodeAt(i) ^ secretKey.charCodeAt(i % keyLength);
+                encryptedText.push(encryptedCharacter);
           }
           return encryptedText.join('');
       },
@@ -300,7 +313,8 @@
           //var senha = this.cifraSenha( this.formPrimeiroAcesso.senha );
           //console.log('-SEND DATA == ' + JSON.stringify(  sendData ) );
 
-          axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
+          // ------------ axios.post( this.$SERVICES_ENDPOINT_URL , sendData ) ------------ 
+          SIGOP_API.post( sendData )
                .then( response => {
                      // console.log('-Response DATA == ' + JSON.stringify(  response.data ) + typeof response.data );
                       this.modalIsVisible = true;
@@ -499,7 +513,7 @@
 
   .loginLabel       {
       display: flex;
-      width: 20%;
+      width: 40%;
       justify-content: space-between;
       overflow-x: auto;
   }

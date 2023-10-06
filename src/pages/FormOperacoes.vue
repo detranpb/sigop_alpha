@@ -1,46 +1,44 @@
 <template>
   <!-- O main sempre vai ser 100% do viewheitgh - (cabeçalho+rodapé)-->
   <main>
-    
-   <!-- debug #########################
-    formDisabled ? {{ formDisabled }}
-   -->
-    <my-modal 
-      id="myModal" 
-      title="Confirmation" 
-      :message="modalMessage" 
-      :visible="modalIsVisible" 
-      @update:visible="modalIsVisible = $event" 
-      @on-close-modal="handleCloseModal()"
-      @on-accept-modal="handleAcceptModal()"
-      @on-reject-modal="handleRejectModal()"/>
-
+ 
     <!-- Dados gerais -->
     <div class="btn-container">
-         <b-button class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
-              <i class="fa fa-sort"></i> Dados Gerais da Operação
+         
+        <!-- Botao caso isAddOperacoesPage -->
+        <b-button v-if="this.isAddOperacoesPage" style="width: 200px" class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
+                <i v-if="collapseDadosOperacaoOn" class="fa-solid fa-angle-up"></i>
+                <i v-else class="fa-solid fa-angle-down"></i> Dados Gerais
+         </b-button>
+
+         <!-- Botao caso consulta historico -->
+         <b-button v-else style="width: 200px" class="fade-in-button btn-add" variant="success" @click="openDadosGerais()">
+                Dados Gerais
          </b-button>
     </div>
 
-    <b-collapse visible id="collapse-1" class="mt-2">
+    <b-collapse visible id="collapse-1" class="mt-2" v-model="collapseDadosOperacaoOn"> 
     <b-card>
 
       <div>
       <b-form inline style="background-color: rgb( 241, 236, 236 );">
             <!-- <b-container class="bv-example-row"> -->
-            <b-container class="teste">
+            <b-container>
             <b-row>
                 <!-- COL. 1 -->
                 <b-col>
-                    <label class="titulo-operacao" for="inline-form-input-name">Nome da Operação: </label>
+                    <label class="titulo-operacao" for="inline-form-input-name"> Nome da Operação: </label>
                     <b-form-input  
-                      placeholder="Insira Nome da Operação" :disabled="formDisabled" v-model="dadosGeraisOperacao.nomeOperacao" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0"></b-form-input> 
+                      placeholder="BLITZ-DETRAN-000" :disabled="formDisabled" v-model="dadosGeraisOperacao.nomeOperacao" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0"></b-form-input> 
                 </b-col>
 
                 <!-- COL. 2 -->
                 <b-col>
                     <label class="titulo-operacao" for="inline-form-input-name"> Matrícula/Responsável: </label>
-                  <b-form-input  autocomplete="off" list="my-list-id" v-model="agenteResponsavel" @blur="validaAgente" :disabled="formDisabled" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0 custom-input"></b-form-input>
+                  <b-form-input  autocomplete="off" 
+                                 list="my-list-id"
+                                 placeholder="Insira Matrícula/Responsável"
+                                 v-model="agenteResponsavel" @blur="validaAgente" :disabled="formDisabled" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0 custom-input"></b-form-input>
                   <datalist id="my-list-id">
                       <option v-for="a in this.agentesLabelBD" :key="a.nome">{{ a }}</option>
                   </datalist>
@@ -48,7 +46,7 @@
                
                 <!-- COL. 3 -->
                 <b-col>
-                    <label class="titulo-operacao" for="example-datepicker">Data: </label>
+                    <label class="titulo-operacao" for="example-datepicker">Data da Operação: </label>
                     <b-form-datepicker :disabled="formDisabled" id="example-datepicker" v-model="dadosGeraisOperacao.data" class="mb-2"></b-form-datepicker>
                     <!-- <p>Value: '{{ data }}'</p>-->
                 </b-col>
@@ -58,19 +56,24 @@
                 <!-- COL. 1 -->
                 <b-col>
                     <label class="titulo-operacao">Município: </label>
-                    <b-form-select :disabled="formDisabled" v-model="dadosGeraisOperacao.municipio" :options="municipios" size="sm" class="mt-3"></b-form-select>
+                    <b-form-select 
+                      class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control"
+                      placeholder="ddddd" :disabled="formDisabled" v-model="dadosGeraisOperacao.municipio" :options="municipios"></b-form-select>
                 </b-col>
 
                 <!-- COL. 2 -->
                 <b-col>
                     <label class="titulo-operacao">Bairro: </label>
-                    <b-form-select :disabled="formDisabled" v-model="dadosGeraisOperacao.bairro" :options="bairros" size="sm" class="mt-3"></b-form-select>
+                    <b-form-select 
+                      class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control"
+                      placeholder="Selecione um bairro."
+                      :disabled="formDisabled" v-model="dadosGeraisOperacao.bairro" :options="this.BAIRROS_JP"></b-form-select>
                 </b-col>
 
                 <!-- COL. 3 -->
                 <b-col>
                     <label class="titulo-operacao" for="inline-form-input-name"> Horário Início: </label><br>
-                    <b-form-timepicker v-model="dadosGeraisOperacao.hraIni" :disabled="formDisabled" locale="pt"></b-form-timepicker>
+                    <input class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control" type="time" v-model="dadosGeraisOperacao.hraIni" :disabled="formDisabled"/>
                 </b-col>
           </b-row>
           
@@ -81,15 +84,16 @@
               <!-- COL. 1 -->
               <b-col v-if="!isAddOperacoesPage">
                 <label class="titulo-operacao" for="inline-form-input-name"> Horário Fim: </label><br>
-                <b-form-timepicker v-model="dadosGeraisOperacao.horaFim" :disabled="formDisabled" locale="pt"></b-form-timepicker>
-              </b-col>
+                <!-- <b-form-timepicker v-model="dadosGeraisOperacao.horaFim" :disabled="formDisabled" locale="pt"></b-form-timepicker>-->
+                <input class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control" type="time" v-model="dadosGeraisOperacao.hraFim" :disabled="formDisabled"/>
+              </b-col> 
               
               <!-- COL. 2 -->
               <b-col>
                   <label class="titulo-operacao" for="inline-form-input-name"> Observações: </label>
                   <b-form-textarea 
-                    placeholder="Insira observações necessárias..."
-                    id="textarea" v-model="dadosGeraisOperacao.observacoes" :disabled="formDisabled"  rows="3" max-rows="6">
+                     placeholder="Insira observações necessárias..."
+                     id="textarea" v-model="dadosGeraisOperacao.observacoes" :disabled="formDisabled"  rows="3" max-rows="6">
                   </b-form-textarea>
               </b-col>
           </b-row>
@@ -98,14 +102,14 @@
           <b-row> 
                   <!-- Dados gerais -->
                   <div class="btn-container">
-                    <b-button v-if="IS_PAGE_EDITABLE" 
+                    <b-button 
+                      v-if="IS_PAGE_EDITABLE" 
                       :disabled="formDisabled" 
                       class="btn-add " variant="primary" 
                       style="width:200px;" 
                       @click="salvarDadosGerais()">
-                        <i class="fa fa-database"></i>
-                        {{ salvarBtnName }}
-                        
+                          <i class="fa fa-database"></i>
+                          {{ salvarBtnName }}
                   </b-button>
                   </div>
                   
@@ -124,28 +128,33 @@
 <script> 
 import axios from 'axios';
 import AppAccordion    from '@/components/AppAccordion.vue';
-import MyModal from '@/components/MyModal.vue';
+//import MyModal from '@/components/MyModal.vue';
+import UtilsMixin from '@/utils/UtilsMixin.js' //--- SE ASSEMELHA A HERANÇA
 
-const CamposForm = {
+const CamposForm =      {
       NOME_OPERACAO: 'Nome Operação',
       MATRICULA_RESPONSAVEL: 'Matricula Responsável',
       DATA: 'Data',
-      BAIRRO: 'Bairro',
-      KM_INI: 'Km Inicial',
+      BAIRRO: 'Bairro', 
+      ALL: 'ALL'
 };
 
-export default              { 
+export default          { 
   name: 'FormOperacoes',
+  mixins: [ UtilsMixin ],
   props: {
       /*** Recebe os dados da busca detalhada do Histórico de Operações (Vem do comp. Pai HistoricoOperacoes.vue) ***/
       dadosOperacoes:Object
   },
   components: 
   {
-    MyModal,
+    //MyModal,
     AppAccordion
   },
-
+  mounted()     /** --------------- FOR DEBUG ----------- **/  
+  {
+      document.addEventListener( 'keydown', this.myFunction );
+  }, 
   computed: 
   { 
       // ----- CONSTANTE ----- 
@@ -157,6 +166,9 @@ export default              {
       MATRICULAS_VALIDAS()              {
           return this.$store.state.matriculasValidas;
       },
+      BAIRROS_JP()                      {
+          return this.$store.state.bairrosJP;
+      },
       LISTA_EQUIPAMENTOS_SELECIONADOS() {
             return this.$store.state.equipsSelecionadosIDs;
       },
@@ -166,25 +178,25 @@ export default              {
   },
   created() 
   {
-      // console.log( JSON.stringify( this.MATRICULAS_VALIDAS ) );
-      //this.authenticationControl();
-      this.getListaAgentes();
+        // ---- console.log( JSON.stringify( this.BAIRROS_JP ) ); ---- 
+        // ---- this.authenticationControl(); ---- 
+        this.getListaAgentes();
 
-        if ( this.$route.name == "addOperacoes" ) {
+        if ( this.$route.name == "addOperacoes" )   {
              this.isAddOperacoesPage = true;
         }    else    {
-            this.isAddOperacoesPage = false;
-            this.salvarBtnName = "Atualizar Operação";
+             this.isAddOperacoesPage = false;
+             this.salvarBtnName = "Atualizar Operação";
         }
         //console.log( "-FormOperacoes || isAddOperacoes? " + this.isAddOperacoesPage );
         this.$store.commit( 'setIsPageEditable', this.isAddOperacoesPage );
         //var str = this.$store.state.isPageEditable;
         //console.log( "AppEquipamentosGRID | isPageEditable ? " + str );
-      /**** Acessando nome de parente
-      const parentComponent = this.$parent;
-      if ( parentComponent ) {
-          var nome = parentComponent.$options.name;
-      } ****/
+        /**** Acessando nome de parente
+        const parentComponent = this.$parent;
+        if ( parentComponent ) {
+            var nome = parentComponent.$options.name;
+        } ****/
       /// console.log( "CREATED FORM ||| store = " + this.$store.state.isPageEditable );
       // this.$store.commit('setIsPageEditable', false );
       this.formDisabled = !this.IS_PAGE_EDITABLE;
@@ -216,31 +228,28 @@ export default              {
   },
   data() 
   {
-    return  {
-       
+    return                      {
+      
+      collapseDadosOperacaoOn: true,
       formDisabled: false,
       agentesLabelBD: [],  /* Vetor de strings matricula - nome */
       agentesBD: [],       /* Vetor de objetos do tipo { nome, matricula }   
-
-      /** ====== MODO DE USO - CONSULTA ====== */
+      /*** ====== MODO DE USO - CONSULTA ====== ***/
       idValue: null,
-
       salvarBtnName: "Salvar Operação",
-
-      responseData: {
-        cod_status: null,
-        mensagem: null,
-        dados:null
+      responseData:             {
+         cod_status: null,
+         mensagem: null,
+         dados:null
       },
       isAddOperacoesPage: -1,
       /* Recebe os dados da busca detalhada do Histórico de Operações (Vem do comp. Pai HistoricoOperacoes.vue)**/
-      dadosOperacoesDetalhes : {
+      dadosOperacoesDetalhes :  {
          dadosOperacao : "",
          lista: []
       },
-      modalIsVisible: false, 
-      modalMessage: "Você tem certeza?",
-      
+      /*modalIsVisible: false, 
+      modalMessage: "Você tem certeza?",*/
       dadosGeraisOperacao : 
       {
           nomeOperacao: "",
@@ -253,44 +262,32 @@ export default              {
           hraFim: null,
           municipio: null,
           observacoes: ""
-      }, 
-
+      },
       municipios: [
-          { value: null, text: 'Selecione um município.' },
           { value: 1, text: 'João Pessoa' },
           { value: 2, text: 'Cabedelo' },
-          { value: 3, text: 'Bayeux' },
+          { value: 3, text: 'Bayeux'   },
           { value: 4, text: 'Santa Rita' },
           { value: 5, text: 'Campina Grande' },
           { value: 6, text: 'Outro' },
-           
       ],
-
       bairros: [
-                { value: null, text: 'Selecione um bairro.' },
-                { value: 1, text: 'Miramar' },
-                { value: 2, text: 'Bessa' },
-                { value: 2, text: 'Manaira' },
+          { value: null, text: 'Selecione um bairro.' },
+          { value: 1, text: 'Miramar' },
+          { value: 2, text: 'Bessa'   },
+          { value: 2, text: 'Manaira' },
       ],
-
-      agenteResponsavel: "41416 - ADSON CICERO SOUZA DE MENEZES",
-      agentes: [
-                { value: 1, text: 'Agente 1' },
-                { value: 2, text: 'Agente 2' },
-                { value: 2, text: 'Agente 3' },
-                { value: 2, text: 'Agente 4' },
-                { value: 2, text: 'Agente 5' },
-                { value: 2, text: 'Agente 6' },
-                { value: 2, text: 'Agente 7' },
-                { value: 2, text: 'Agente 8' }
-      ]
+      agenteResponsavel: "",
+      agentes: [ { value: 1, text: 'Agente 1' },
+                 { value: 2, text: 'Agente 2' },
+                 { value: 2, text: 'Agente 3' },
+                 { value: 2, text: 'Agente 4' },
+                 { value: 2, text: 'Agente 5' },
+                 { value: 2, text: 'Agente 6' },
+                 { value: 2, text: 'Agente 7' },
+                 { value: 2, text: 'Agente 8' } ]
   }
-},
-
-/*************************
-mounted() {
-  this.fetchOptions();
-}, ********************/
+}, 
  methods:  {
    /* handleDataUpdate( updatedData  )    
     {
@@ -298,16 +295,16 @@ mounted() {
         // console.log( "X[ " + this.ID + "] = " + updatedData );
         // console.log( "FormOperacoes[0] = " + updatedData.usuMatricula + " || " + equipamentosPorAgente[0] );
     },*/
-    
-    authenticationControl()   
-    {
-        var isAuth = this.$store.state.isAutenticated;
-        console.log( "- Auth? " + isAuth );
-        if ( !isAuth )          {
-              console.log("indo p login...");
-              this.$router.push('/login');
-        }
+    close()                                      {
+        console.log( "--- CLOSE !!!!! " );
+        this.$refs.collapse.close();
     },
+    myFunction( event )                          {
+        // ----- BARRA DE SPAÇO ----- 
+        if ( ( event.keyCode == 32 ) && ( process.env.NODE_ENV === 'development' ) )        {
+               this.salvarDadosGerais( true );
+            }
+    }, 
     setFormEditable()     {
         this.formDisabled = this.IS_PAGE_EDITABLE;
     },
@@ -329,8 +326,9 @@ mounted() {
       
       if ( !isValid ) 
       {
-          this.modalIsVisible = true;
-          this.modalMessage = "Matrícula/Responsável inválida.";
+          /*this.modalIsVisible = true;
+          this.modalMessage = "Matrícula/Responsável inválida.";*/
+          this.showModal( "Matrícula/Responsável inválida.");
           this.agenteResponsavel = "";
       } else {
           this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
@@ -376,20 +374,14 @@ mounted() {
         .catch(error => {
           console.error(error);
         });
-    },
-    replaceSubstrings( STR )  {
-          const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
-          const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
-          for ( let i = 0; i < V1.length; i++ )
-                STR = STR.split( V1[i] ).join(V2[i] );
-          return STR;
-    },
-    toggleFormDisabled() {
+    }, 
+    /* Este método também é chamado em setFormEditable() dentro do componente HistoricoOperacoes.vue*/
+    toggleFormDisabled()              {
       this.formDisabled = !this.formDisabled;
     },
 
     /* FUNÇÃO USADA PELO COMPONENTE HistoricoOperacoes */
-    setDadosGerais( obj )  {
+    setDadosGerais( obj )              {
 
         // console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
         this.idValue = obj.id;
@@ -405,61 +397,80 @@ mounted() {
         this.dadosGeraisOperacao.kmFim                = obj.kmFim;
         this.dadosGeraisOperacao.municipio            = obj.municipio;
     },
+    
     validaDadosGerais( camposForm )
     {
-
-      if ( camposForm.includes( CamposForm.NOME_OPERACAO ) )  
+      var dataOperacao = this.convertUSToBRDate( this.dadosGeraisOperacao.data );
+      if ( this.isAddOperacoesPage )           
+      {   
+           if ( this.DATA_ATUAL != dataOperacao )        {
+                /** this.modalIsVisible = true;
+                this.modalMessage = "Data da operação diferente da data atual."; **/
+                this.showModal( "Data da operação diferente da data atual." );
+                return false;
+           } 
+      }
+      if ( camposForm.includes( CamposForm.ALL ) )  
       {
           // console.log( "VALID = " + JSON.stringify( this.dadosGeraisOperacao ) );
           if ( ( this.dadosGeraisOperacao.nomeOperacao.length <= 5 ) || 
                ( this.dadosGeraisOperacao.nomeOperacao == "Insira nome" ) ) 
                {
-                this.modalIsVisible = true;
-                this.modalMessage = "Nome operação inválido ou muito curto.";
+                /* this.modalIsVisible = true;
+                   this.modalMessage = "Nome operação inválido ou muito curto.";*/
+                this.showModal( "Nome operação inválido ou muito curto." );
                 return false;
                 }
       }
-      if ( camposForm.includes( CamposForm.MATRICULA_RESPONSAVEL ) )  
+      if ( camposForm.includes( CamposForm.ALL ) )  
       {
-          if ( this.agenteResponsavel == null )
+          if ( ( this.agenteResponsavel == null ) || ( this.agenteResponsavel.length <= 10 ) )
           {
-                this.modalIsVisible = true;
-                this.modalMessage = "Matrícula/Responsável inválida.";
+                /* this.modalIsVisible = true;
+                this.modalMessage = "Matrícula/Responsável inválida."; */
+                this.showModal( "Matrícula/Responsável inválida." );
                 return false;
           } else {
               this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
               // console.log( "-Matricula = " + this.dadosGeraisOperacao.matriculaResponsavel );
           }
       }
-      if ( camposForm.includes( CamposForm.DATA ) )  
+      if ( camposForm.includes( CamposForm.ALL ) )  
       {
-        if ( this.dadosGeraisOperacao.data   == "00-00-0000" )   {
-            this.modalIsVisible = true;
-            this.modalMessage = "Data da operação não informada.";
-            return false;
+        if ( this.dadosGeraisOperacao.data   == "00-00-0000" )          {
+             /*this.modalIsVisible = true;
+             this.modalMessage = "Data da operação não informada.";*/
+             this.showModal( "Data da operação não informada." );
+             return false;
         }
       }
-      /* if ( this.dadosGeraisOperacao.bairro == null  )         {
-           this.modalIsVisible = true;
-           this.modalMessage = "Bairro não informada.";
+      if ( this.dadosGeraisOperacao.bairro == null  )             {
+           /* this.modalIsVisible = true;  || this.modalMessage = "Bairro não informada."; */
+           this.showModal( "Bairro não informada." );
            return false;
-      }*/
-      if ( camposForm.includes( CamposForm.KM_INI ) )  
+      }       
+      if ( this.dadosGeraisOperacao.hraIni == null )              {
+           /**this.modalIsVisible = true;  || this.modalMessage = "Hora inicial não informada.";*/
+           this.showModal( "Hora inicial não informada." );
+           return false;
+      }
+      if ( !this.isAddOperacoesPage )   
       {
-        if ( this.dadosGeraisOperacao.kmIni  == "0.0" )          {
-            this.modalIsVisible = true;
-            this.modalMessage = "Quilometragem inicial não informada.";
-            return false;
-        }
-      } 
-      if ( this.dadosGeraisOperacao.hraIni == null )        {
-           this.modalIsVisible = true;
-           this.modalMessage = "Hora inicial não informada.";
-           return false;
+           if ( this.dadosGeraisOperacao.hraFim == null )        {
+                /***
+                 * this.modalIsVisible = true;
+                 * this.modalMessage = "Hora final não informada.";
+                 ***/
+                this.showModal( "Hora final não informada." );
+                return false;
+           }
       }
       if ( this.dadosGeraisOperacao.municipio == null )     {
-           this.modalIsVisible = true;
-           this.modalMessage = "Município não informado.";
+           /**
+            * this.modalIsVisible = true;
+           * this.modalMessage = "Município não informado."; 
+           **/
+           this.showModal( "Município não informado." );
            return false;
       }
       return true;
@@ -469,46 +480,39 @@ mounted() {
       this.$refs.input.style.color = 'red';
     },
     salvarDadosGerais()
-    {  
-     
-      /*if ( !this.validaDadosGerais( [ CamposForm.NOME_OPERACAO, CamposForm.DATA, CamposForm.MATRICULA_RESPONSAVEL ] ) )
-            return false; */
-     
-      var sendData = {
-          dados: {
-              entidade: 'operacao',
-              operacao: ( this.isAddOperacoesPage == true) ? 'cadastrar' : 'atualizar',
-              objeto: null,
-          }
+    { 
+      var isValid = false;
+      // if ( !isDebug )                   
+      isValid = ( this.validaDadosGerais( [ CamposForm.ALL ] ) );
+      // console.log( "- isValid = " + isValid + " ||| " + process.env.NODE_ENV );
+
+      if ( !isValid )
+            return false;
+
+      var   sendData = {
+            dados: {
+                entidade: 'operacao',
+                operacao: ( this.isAddOperacoesPage == true) ? 'cadastrar' : 'atualizar',
+                objeto: null,
+            }
        };
 
-        // let jsonData = JSON.stringify( this.dadosGeraisOperacao ).replace( /\\/g, "" );
-        // console.log( "-->> jsonData = " + jsonData ); 
-        // isAddOperacoesPage
-        if ( this.agenteResponsavel != null )
-             this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
+       // let jsonData = JSON.stringify( this.dadosGeraisOperacao ).replace( /\\/g, "" );
+       // console.log( "-->> jsonData = " + jsonData ); 
+       if ( this.agenteResponsavel != null )
+            this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
 
-        sendData.dados.objeto = this.dadosGeraisOperacao;
+       sendData.dados.objeto = this.dadosGeraisOperacao;
 
-        /* Caso esteja na pag. de Busca de Operações, setar o campo ID, p/ atualizar */
-        if ( this.isAddOperacoesPage == false ) 
-             sendData.dados.objeto.id = this.idValue;
+       /* Caso esteja na pag. de Busca de Operações, setar o campo ID, p/ atualizar */
+       if ( this.isAddOperacoesPage == false ) 
+            sendData.dados.objeto.id = this.idValue;
 
         // console.log( "-- SALVAR ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
              .then( response => {
-
-              /***
-              var responseStr = JSON.stringify( response.data ).replace( /\\/g, "" );
-              // Check if the first and last characters are double quotes
-              if ( responseStr.charAt(0) === '"' && responseStr.charAt(responseStr.length - 1) === '"' )
-                   responseStr = responseStr.substring( 1, responseStr.length - 1 ); // Remove the double quotes*/
-              
-              // console.log( "Response JSON ===>>> " + response.data + " - " + typeof response.data );
-              //const strData = JSON.stringify( response.data ).replace( /\\/g, "" );
-              //var respObj = response.data;
-
+ 
               if ( ( typeof response.data ) == 'object' )  {
                     var data = response.data;
                     /* console.log('-DATA == ' + JSON.stringify(  data )  );
@@ -516,17 +520,27 @@ mounted() {
 
                     if ( data.code == 0 )   
                     {
-                         // console.log( "ID = " + data.data.id );
-                         this.idValue = data.data.id;
-                         this.modalIsVisible = true;
-                         this.modalMessage = "Operação salva com sucesso! (ID = " + this.idValue + ")";
+                        // console.log( "ID = " + data.data.id );
+                        this.idValue = data.data.id;
+                         
+                        /*** Fecha automaticamente o collapse, caso esteja na página de adicionar ***/
+                        if ( this.isAddOperacoesPage )
+                             this.collapseDadosOperacaoOn = false;
+
+                        if ( this.isAddOperacoesPage )
+                             this.showModal( "Operação salva com sucesso! (ID = " + this.idValue + ")" );
+                        else 
+                             this.showModal( "Operação atualizada com sucesso! (ID = " + this.idValue + ")" );
+
+                         /***** if ( this.isAddOperacoesPage )  {
+                                setTimeout( () => {
+                                    this.showModal( "Adicione a lista de Agentes/Equipamentos." );
+                                    // tempo++; }, 2000 ); }*****/
+                         
                     }    else   {
-                         this.modalIsVisible = true;
-                         this.modalMessage = response.data.message;
+                         this.showModal( response.data.message );
                     }
               }          
-
-              
             })
             .catch(error => {
               this.error = error.message;
@@ -541,9 +555,10 @@ mounted() {
     openDadosGerais()
     {
       if ( this.IS_PAGE_EDITABLE )
-       this.getMunicipios();
-      // console.log("oi");
-      //var x = " ";
+           this.getMunicipios();
+           
+           // console.log("oi");
+           // var x = " ";
     },
     getMunicipios()               {
           const sendData = {
@@ -580,32 +595,32 @@ mounted() {
 .table-container           {
     margin: 10px;
 }
-table.editable-table       {
+table.editable-table            {
     margin-top: 10px;
     font-size: small;
 }
-table.editable-table td    {
+table.editable-table td         {
     vertical-align: middle;
 }
-.editable-table .data-cell {
-  padding: 8px;
-  vertical-align: middle;
+.editable-table .data-cell      {
+    padding: 8px;
+    vertical-align: middle;
 }
 
 .editable-table .custom-checkbox {
-  width: 50px;
+    width: 50px;
 }
 
 .remove-icon      {
-  color: red;
-  cursor: pointer;
-  font-size: 20px;
+    color: red;
+    cursor: pointer;
+    font-size: 20px;
 }
 
 .edit-icon        {
-  color: rgb(4, 83, 158);
-  cursor: pointer;
-  font-size: 20px;
+    color: rgb(4, 83, 158);
+    cursor: pointer;
+    font-size: 20px;
 }
 
 .name-col          {
@@ -637,49 +652,46 @@ table.editable-table td    {
     margin-top: 20px;
 } 
 .titulo-operacao      {
-  color: rgb(4, 64, 104);
-  font-size: 15px;
-  font-weight: bold;
+    color: rgb(4, 64, 104);
+    font-size: 15px;
+    font-weight: bold;
 }
 .legenda-tabela            {
-  color: rgb(5, 76, 104);
-  font-size: 14px;
-  font-weight: bold;
-  content: "";
-  padding-left: 5%;
+    color: rgb(5, 76, 104);
+    font-size: 14px;
+    font-weight: bold;
+    content: "";
+    padding-left: 5%;
 }
  
-.km-label {
-  font-size: 12px; 
-  font-weight: bold; 
-  color: rgb(0, 0, 0); 
+.km-label                  {
+    font-size: 12px; 
+    font-weight: bold; 
+    color: rgb(0, 0, 0); 
 }
 
-.fade-in-button {
-  background-color: #9cb8dd;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  transition: background-color 0.5s ease-in-out;
+.fade-in-button             {
+    background-color: #9cb8dd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    transition: background-color 0.5s ease-in-out;
 }
 
 .fade-in-button:hover {
-  background-color: #6c8ebf;
+    background-color: #6c8ebf;
 }
-.custom-input {
-  width: 300px; /* Set the desired width */
+.custom-input   {
+    width: 300px; /* Set the desired width */
 }
-
-.offset       {
+.offset         {
     margin-right: -600px;
 }
-
 .btn-container  {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
-
 .inputInit      {
-  color: lightblue;
+   color: lightblue;
 }
 </style>

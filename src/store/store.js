@@ -20,6 +20,50 @@ const store = new Vuex.Store( {
     listaAgentes: [],
     listaLabelAgentes: [], /*Strings: MATRICULA - NOME */
 
+    bairrosJP : 
+    [ 
+      "OUTRO",
+      "AEROCLUBE 			",
+    "AGUA FRIA 				",
+    "ALTIPLANO 				",
+    "ALTO DO CEU 			",
+    "ANATOLIA 				",
+    "BAIRRO DAS INDUSTRIAS 	",
+    "BANCARIOS 				",
+    "BESSA 					",
+    "BRISAMAR 				",
+    "CABO BRANCO 			",
+    "CASTELO BRANCO 		",	
+    "CENTRO 				",	
+    "CIDADE DOS COLIBRIS    ",
+    "CIDADE VERDE 			",
+    "DISTRITO INDUSTRIAL 	",
+    "ERNANI SATIRO 			",
+    "ESPLANADA 				",
+    "ESTADOS 				",
+    "EXPEDICIONARIOS        ",
+    "FUNCIONARIOS 			",
+    "GRAMAME 				",
+    "ILHA DO BISPO          ",
+    "IPES 					",
+    "JARDIM 13 DE MAIO      ",
+    "JARDIM LUNA 			",
+    "JARDIM OCEANIA         ",
+    "JOAO AGRIPINO 			",
+    "MANAIRA 				",
+    "MANDACARU 				",
+    "MANGABEIRA 			",	
+    "MIRAMAR 				",
+    "PEDRO GONDIM 			",
+    "PORTAL DO SOL 			",
+    "ROGER 					",
+    "SAO JOSE 				",
+    "TAMBAU 				",	
+    "TAMBAUZINHO            ",
+    "TORRE 					",
+    "VALENTINA FIGUEIREDO   ",
+    "VARADOURO              "],
+    
     matriculasValidas: [ 
         41416, 
         41441, 
@@ -79,15 +123,15 @@ const store = new Vuex.Store( {
     setEquipsSelecionadosIDs( state , data )  {
         state.equipsSelecionadosIDs = data;
     },
-    setIsPageEditable( state , data )   {
+    setIsPageEditable( state , data )         {
         state.isPageEditable = data;
         // console.log( "No Mutation || isPageEditable " + state );
     },
-    setIsAutenticated( state , data )   {
+    setIsAutenticated( state , data )         {
       state.isAutenticated = data;
       console.log( "No Mutation || isAutenticated " + state );
     },
-    setUser( state , data )             {
+    setUser( state , data )                   {
         state.user = data;
         console.log( "Mutation SET USER ===>>> " + JSON.stringify( state.user ) );
     },

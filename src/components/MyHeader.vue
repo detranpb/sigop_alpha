@@ -3,16 +3,25 @@
 		<nav class="d-flex justify-content-between align-items-center py-3">
 			<div class="menu-btn">
 				<b-button variant="primary" v-if="showButtonAndAvatar" v-b-toggle.sidebar-backdrop class="ml-5"> Menu </b-button>
-				<a href="/home" >
+				<!-- Home Button (Caso DESKTOP) -->
+				<div v-if="!this.$IS_MOBILE_APP"> 
+					<a href="index.html#/home" >
+						<i v-if="showButtonAndAvatar" class="home-btn fas fa-home fa-lg"></i>
+					</a>
+				</div>
+			</div>
+			<!-- Home Button (Caso MOBILE) -->
+			<div v-if="this.$IS_MOBILE_APP" style="margin-right: 2%;"> 
+				<a href="index.html#/home" >
 					<i v-if="showButtonAndAvatar" class="home-btn fas fa-home fa-lg"></i>
 				</a>
 			</div>
 			
 			<div class="mx-auto nome-app">
-				Sistema de Gestão Operacional de Policiamento (SIGOP) 
+				{{ APLICATION_NAME }} 
 			</div>
-
-			<div class="header-left-comps d-flex justify-content-end align-items-center">
+			
+			<div v-if="!this.$IS_MOBILE_APP" class="header-left-comps d-flex justify-content-end align-items-center">
 				<img class="detran-logo mr-2" src="@/assets/detran-logo.png">
 				<b-avatar v-if="showButtonAndAvatar" variant="info" rounded></b-avatar>
 				<div v-if="showButtonAndAvatar" class="user-data">
@@ -25,23 +34,23 @@
 			</div>
 		</nav>
 
-		<b-sidebar id="sidebar-backdrop" title="Menu" bg-variant="dark" :backdrop-variant="variant" no-header-close backdrop shadow>
+		<b-sidebar id="sidebar-backdrop" title="Menu" bg-variant="dark" :backdrop-variant="variant" no-header-close backdrop shadow responsive>
 		<!-- <b-sidebar close-icon="x" id="sidebar-variant" title="Menu" bg-variant="dark" text-variant="light" shadow>-->
 		<div class="px-3 py-2">
 			
-			<div id="menu-items">
+			<div>  
 				<ul>
-					<li><a href="index.html#/add-operacoes"> 
+					<li v-if="!this.$IS_MOBILE_APP"><a href="index.html#/add-operacoes"> 
 						<i class="fas fa-plus"></i>  Cadastra Operações </a>
 					</li>
-					<li><a href="index.html#/historico-operacoes"> 
+					<li v-if="!this.$IS_MOBILE_APP"><a href="index.html#/historico-operacoes"> 
 						<i class="fas fa-search"></i> Histórico de Operações </a>
 					</li>
-					<li><a href="index.html#/historico-equipamentos"> 
+					<li v-if="!this.$IS_MOBILE_APP"><a href="index.html#/historico-equipamentos"> 
 						<i class="fas fa-timeline"></i> Histórico de Equipamentos </a>
 					</li>
-					<li>
-						<i class="fas fa-chart-bar"></i> Relatórios Gerais
+					<li><a href="index.html#/add-relatorio-operacao"> 
+						<i class="fas fa-chart-bar"></i> Relatórios Gerais</a>
 					</li>
 				</ul>
 			</div>
@@ -59,7 +68,8 @@ export default
   data()				  {	
 		return {
 			variant: 'dark',
-			menuActive: false 
+			menuActive: false, 
+			APLICATION_NAME: "", 
 		}
   }, 
   computed: 	
@@ -89,7 +99,7 @@ export default
 
 			const user = localStorage.getItem('user');
 			// console.log( "Load nome ==>> " + JSON.parse(user).nome );
-			if (user) {
+			if ( user ) {
 				return (JSON.parse(user).sobrenome).toUpperCase();
 			} else { return ''; }
 		},
@@ -106,11 +116,18 @@ export default
     // Reload the key value.
   },
   created()		{
-	//console.log("kkk= " + this.$route.name  );
+	// alert( "mobile? " + this.$IS_MOBILE_APP );
+	if ( this.$IS_MOBILE_APP )		
+		 this.APLICATION_NAME = "SIGOP - DETRAN-PB";
+	else 
+		this.APLICATION_NAME = "Sistema de Gestão Operacional de Policiamento (SIGOP)";
+	  	 
   },
   updated() 	{
-   	 //console.log("kkk= " + this.$route.name  );
-
+	  // console.log("kkk= " + this.$route.name  );
+	   
+	  
+	  // alert( "- TESTE = " + this.$route.name );
       /*this.$router.history.listen( (newLocation) => {
         console.log( newLocation.path );
       })*/
@@ -225,7 +242,7 @@ export default
 	}
 
 	
-	/* o media query, serve para definir estilos p/ diferentes dispositivos*/
+	/* Estilos APENAS para Desktop!! */
 	@media (min-width:620px) {
 		
 		/* essas classes não serão exibidos no Desktop */
@@ -242,7 +259,17 @@ export default
 			width: auto;
 			justify-content:stretch;
 			align-items:center;
-		} 
+		}
+		.nome-app	{
+			position: absolute;
+			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+			color:#fff9f9;
+			font-weight: bold;
+			font-size: 18px;
+			left: 0;
+			right: 0;	
+			text-align: center;
+		}
 	}
 
 	nav {
@@ -260,17 +287,26 @@ export default
 	.menu-btn	{
 		margin-left: 2%;
 		z-index: 10;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
 	}
-	.nome-app	{
-		position: absolute;
-		font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-		color:#fff9f9;
-		font-weight: bold;
-		font-size: 18px;
-		left: 0;
-  		right: 0;	
-		text-align: center;
+
+	/* Estilos APENAS para celular */
+	@media (max-width: 619px) 	{
+		.nome-app	{
+			
+			position: absolute;
+			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+			color:#ffffff;
+			font-weight: bold;
+			font-size: 15px;
+			left: 0;
+			right: 0;	
+			text-align: center;
+		}
 	}
+	
 
 	/*Componentes à esquerda no header*/
 	.header-left-comps	{
