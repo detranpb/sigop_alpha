@@ -113,21 +113,20 @@ export default
       MATRICULAS_VALIDAS() { return this.$store.state.matriculasValidas; },
   },
   props:    {
-      idValue: {
+      idValue:            {
         required: true, 
       },
-      tablesAgentes:  {
+      tablesAgentes:      {
         type: Array,
       }
   },
   name: 'AppAccordion',
-  components:         {
+  components:             {
       AppEquipamentosGrid,
   },
   watch:              
   {  
-      idValue( newIdValue )         
-      {
+      idValue( newIdValue )               {
           this.idOperacao = newIdValue;
       },
       tablesAgentes( newTables )    
@@ -135,16 +134,16 @@ export default
           this.vetTablesData = newTables;
           const matriculas = [...new Set( this.vetTablesData.map( item => item.matriculaAgente ) ) ];
           this.usuMatricula = matriculas;
-          //console.log("-- usuMatriculas ===>>> " + JSON.stringify( this.usuMatricula ) );
+          // console.log("-- usuMatriculas ?!? ===>>> " + JSON.stringify( this.usuMatricula ) );
 
           this.nAgentes = matriculas.length;
           // console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
           
           for ( var i=0; i<this.nAgentes; i++ )  {
-                const newItem = {
-                    title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
-                    placeholder: "Insira matrícula do Agente N°" + ( this.accordionItems.length + 1 ),
-                    content: 'Registros de Entrada/Saída de Equipamentos'
+                const newItem =   {
+                      title: 'Agente N° ' + ( this.accordionItems.length + 1 ),
+                      placeholder: "Insira matrícula do Agente N°" + ( this.accordionItems.length + 1 ),
+                      content: 'Registros de Entrada/Saída de Equipamentos'
                 }
                 if ( this.accordionItems.length <= this.$TOTAL_AGENTES_POR_OPERACAO )
                      this.accordionItems.push( newItem );
@@ -186,7 +185,6 @@ export default
           ],*/
           modalIsVisible: false,
           modalMessage: "Deseja confirmar a operação?",
-
           agentesLabelBD: ['teste'],  /* Vetor de strings matricula - nome */
           agentesBD: [],              /* Vetor de objetos do tipo { nome, matricula }   */
 
@@ -209,11 +207,7 @@ export default
           // Variáveis compartilhadas/públicas com emit
           equipamentosPorAgente : [], // Cada ID, é o ID do agente
           usuMatricula : [],
-          
-
-
           inputMatriculasAtivas : [], // Guarda as matriculas atualmente digitadas
-
           matrix : {},
           isAddOperacoesPage: -1,
 
@@ -225,33 +219,62 @@ export default
     },
     
     methods:  { 
-      updateUsuMatricula(index, value)      { 
+      updateUsuMatricula(index, value)    { 
           this.usuMatricula[index] = value;
       },
-      handleKeyDown(event)                  {
+      handleKeyDown(event)                {
           //const value = event.target.value;
           //( "AppAcordion || matri = " + value );
-          if ( !this.isAddOperacoesPage )    {
+          if ( !this.isAddOperacoesPage ) {
                 event.preventDefault();
 
-                /*this.modalMessage   = "Alteração de matrícula não permitida.";
-                this.modalIsVisible = true;*/
+                /*** this.modalMessage   = "Alteração de matrícula não permitida.";
+                this.modalIsVisible = true; ***/
                 this.showModal( "Alteração de matrícula não permitida." );
           }
       },
-      handleCloseModal()              { 
-          this.modalIsVisible = false;
+      handleCloseModal()            
+      {  
+         this.modalIsVisible = false;
       },
-      handleAcceptModal()             { 
-          this.modalIsVisible = false;
+      handleAcceptModal()           
+      { 
+         this.modalIsVisible = false;
       },
-      handleRejectModal()             { 
-          this.modalIsVisible = false;
+      handleRejectModal()           
+      { 
+         this.modalIsVisible = false;
+      },
+      groupByMatriculaAgente( inputArray )      
+      {
+         const groupedArrays = inputArray.reduce( ( result, item ) => {
+         const matriculaAgente = item.matriculaAgente;
+
+         // Check if there's an array for the current "matriculaAgente" value, if not, create one
+         if ( !result[ matriculaAgente ] )  {
+            result[matriculaAgente] = [];
+          }
+
+          // Push the current object into the corresponding array
+          result[matriculaAgente].push(item);
+
+          return result;
+        }, {});
+
+        // Convert the grouped object into an array of arrays
+        const groupedArray = Object.values(groupedArrays);
+
+        return groupedArray;
       },
       getTabelasPorAgentes( index )
       { 
+          // console.log( " -->>> vetTablesData = " + JSON.stringify( this.vetTablesData ) );
+          /*** console.log( " -- matriculas = " + JSON.stringify( this.usuMatricula[ index ] ) );
+          var vet = this.groupByMatriculaAgente( this.vetTablesData );
+          console.log( "ALL>" + JSON.stringify( vet ) );
+          return vet; ***/
           var tableMatricula = this.vetTablesData.filter( item => item.matriculaAgente === this.usuMatricula[ index ] );
-          // console.log( "data tst = " + JSON.stringify( tableMatricula ) );
+          // console.log( "-- Data tst = " + JSON.stringify( tableMatricula ) );
           return tableMatricula;
       },
       toggleAccordion( index ) 
@@ -261,20 +284,59 @@ export default
       },
       confirmaMatriculaAgente( index )
       {
-          if ( this.isAddOperacoesPage )      
-          {
-               var isValid = this.validaAgente( index );
-               if ( isValid )
-                    this.toggleAccordion( index );
-          }    else    {
-               this.toggleAccordion( index );
-          }
-
+         if ( this.isAddOperacoesPage )      
+         {
+              var isValid = this.validaAgente( index );
+              if ( isValid )
+                   this.toggleAccordion( index );
+              // ***** alert( "Matricula salva? " +  ); ***** 
+              // ***** alert( "usu? " + JSON.stringify( this.usuMatricula ) ); ***** 
+              if ( this.hasAgenteBeenSaved( index ) )
+                   this.getUsoEquipamentos( index );
+         }    else    {
+              this.toggleAccordion( index );
+         }
       },
+      /** getUsoEquipamentos( index ) 
+      {
+        // alert( "-- Agente ==>>> " + this.usuMatricula[ index ] );
+        var usuMatriculaStr = this.usuMatricula[ index ];
+        // Remove all non-numeric characters from the string
+        var numericString = usuMatriculaStr.replace(/[^0-9]/g, "");
+        var matricula = parseInt( numericString, 10 );
+        
+
+        var sendData  =  {
+            dados:    {
+                entidade: 'usoEquipamento',
+                operacao: 'consultar',
+                objeto: {}
+            }
+        }
+        var obj =        {
+            idOperacao: this.idOperacao,
+            matriculaAgente: matricula
+        }
+        sendData.dados.objeto = obj;
+        // console.log( "-- SEND ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+
+        axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
+             .then( response => {
+                    // console.log( "Resposta API ==>>> " +  JSON.stringify( response.data ).replace( /\\/g, "" ) );
+
+                    //var isAvariado = response.data.isAvariado;
+                    // alert( "isCheck? " + isAvariado );
+
+                  })
+             .catch( error => {
+                     this.error = error.message;
+             });
+      },**/
       inputMatriculaAtivo( index ) 
       {
           return ( !( this.IS_PAGE_EDITABLE && !this.agentesHasSavedBD[ index ] ) ) || 
-                 ( this.matriculasValidadas[ index ] );
+                 ( this.matriculasValidadas[ index ] ) ||
+                 ( !this.isAddOperacoesPage );  //*** CASO SEJA PAGINA DE CONSULTA ***
       },
       addAccordionItem()       
       { 
@@ -295,6 +357,7 @@ export default
           // console.log( JSON.stringify( this.agentesHasSavedB ) + " || index = " + index );
           this.$delete( this.accordionItems, index );
           this.matriculasValidadas[ index ] = false;
+          this.accordionState[ index ] = false;
 
           // console.log( "->> Acc. Items: " + JSON.stringify(  this.accordionItems )  );
           for( var i=0; i<this.accordionItems.length; i++ )   {

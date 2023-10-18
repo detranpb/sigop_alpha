@@ -5,6 +5,7 @@ const UtilsMixin = {
       return {
             msg: 'Você clicou no botão',
             DATA_ATUAL:'',
+            DATA_ATUAL_USA:'',
             AGENTES_LABELS_BD: [],  /* Vetor de strings matricula - nome */
             
             /**modalIsVisible: false,
@@ -14,6 +15,7 @@ const UtilsMixin = {
     created: async function ()          {
         this.globalDate = await this.fetchGlobalDate();
         this.DATA_ATUAL = this.globalDate.toLocaleDateString();
+        this.DATA_ATUAL_USA = this.convertBRToUSADate( this.DATA_ATUAL );
         // alert( "datin: " + this.Globals.DATA_ATUAL );
     },
     methods:                                          {   
@@ -22,7 +24,23 @@ const UtilsMixin = {
               const data = await response.json();
               const date = new Date( data.datetime );
               return date;
-        },  
+        },
+         convertBRToUSADate( brazilianDateString )      {
+            // Split the Brazilian date string into its day, month, and year components
+            const [day, month, year] = brazilianDateString.split("/");
+          
+            // Reverse the order of the day and month components
+            const [monthComponent, dayComponent] = [day, month];
+          
+            // Create a new Date object from the reversed date components
+            const date = new Date(year, monthComponent - 1, dayComponent);
+          
+            // Format the Date object in the USA date format
+            const usaDateString = date.toISOString().split("T")[0];
+          
+            // Return the USA date string
+            return usaDateString;
+        },
         convertUSToBRDate( usDateString ) 
         {
             const parts = usDateString.split("-");

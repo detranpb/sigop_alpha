@@ -3,17 +3,16 @@
   <main>
   <b-card>
       <h4 style="margin: 15px;" class="card-title text-center titulo-paginas"> Histórico de Operações </h4> 
-      <!--<div>
+      <!-- <div>
           <b-button size="sm" variant="primary" class="float-center" @click="novaConsulta()">
                 Nova Consulta
-          </b-button>
-      </div>-->
+          </b-button> </div>-->
       
       <!-- Consulta de Operações
       <ConsultaOperacoes @table-updated="rowData => handleOperacaoSelected( rowData )" /> -->
 
       <ConsultaOperacoes
-          @table-updated="rowData => handleOperacaoSelected( rowData )" 
+          @table-updated="rowData => handleOperacaoSelected( rowData )"
           @nova-consulta="data => handleNovaConsulta(data)"/>
 
       <!-- Detalhes de Operações -->
@@ -220,7 +219,7 @@ export default
 
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
               .then( response => {
-                    // console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
+                    console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
                     // this.responseData = response.data; // 
                     // console.log( "Retorno type = " + typeof response.data );
                     this.responseOperacoesData = response.data; // -->>> Isso chama o watcher !

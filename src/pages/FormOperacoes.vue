@@ -7,21 +7,21 @@
          
         <!-- Botao caso isAddOperacoesPage -->
         <b-button v-if="this.isAddOperacoesPage" style="width: 200px" class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
-                <i v-if="collapseDadosOperacaoOn" class="fa-solid fa-angle-up"></i>
-                <i v-else class="fa-solid fa-angle-down"></i> Dados Gerais
-         </b-button>
+           <i v-if="collapseDadosOperacaoOn" class="fa-solid fa-angle-up"></i>
+           <i v-else class="fa-solid fa-angle-down"></i> Dados Gerais
+        </b-button>
 
-         <!-- Botao caso consulta historico -->
-         <b-button v-else style="width: 200px" class="fade-in-button btn-add" variant="success" @click="openDadosGerais()">
-                Dados Gerais
-         </b-button>
+        <!-- Botao caso consulta historico -->
+        <b-button v-else style="width: 200px" class="fade-in-button btn-add" variant="success" @click="openDadosGerais()">
+           Dados Gerais
+        </b-button>
     </div>
 
     <b-collapse visible id="collapse-1" class="mt-2" v-model="collapseDadosOperacaoOn"> 
     <b-card>
 
-      <div>
-      <b-form inline style="background-color: rgb( 241, 236, 236 );">
+    <div>
+    <b-form inline style="background-color: rgb( 241, 236, 236 );">
             <!-- <b-container class="bv-example-row"> -->
             <b-container>
             <b-row>
@@ -46,7 +46,7 @@
                
                 <!-- COL. 3 -->
                 <b-col>
-                    <label class="titulo-operacao" for="example-datepicker">Data da Operação: </label>
+                    <label class="titulo-operacao" for="example-datepicker"> Data da Operação: </label>
                     <b-form-datepicker :disabled="formDisabled" id="example-datepicker" v-model="dadosGeraisOperacao.data" class="mb-2"></b-form-datepicker>
                     <!-- <p>Value: '{{ data }}'</p>-->
                 </b-col>
@@ -55,7 +55,7 @@
           <b-row>
                 <!-- COL. 1 -->
                 <b-col>
-                    <label class="titulo-operacao">Município: </label>
+                    <label class="titulo-operacao"> Município: </label>
                     <b-form-select 
                       class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control"
                       placeholder="ddddd" :disabled="formDisabled" v-model="dadosGeraisOperacao.municipio" :options="municipios"></b-form-select>
@@ -63,7 +63,7 @@
 
                 <!-- COL. 2 -->
                 <b-col>
-                    <label class="titulo-operacao">Bairro: </label>
+                    <label class="titulo-operacao"> Bairro: </label>
                     <b-form-select 
                       class="mb-2 mr-sm-2 mb-sm-0 custom-input form-control"
                       placeholder="Selecione um bairro."
@@ -102,25 +102,28 @@
           <b-row> 
                   <!-- Dados gerais -->
                   <div class="btn-container">
-                    <b-button 
-                      v-if="IS_PAGE_EDITABLE" 
-                      :disabled="formDisabled" 
-                      class="btn-add " variant="primary" 
-                      style="width:200px;" 
-                      @click="salvarDadosGerais()">
-                          <i class="fa fa-database"></i>
-                          {{ salvarBtnName }}
-                  </b-button>
+                      <b-button 
+                        v-if="IS_PAGE_EDITABLE" 
+                        :disabled="formDisabled" 
+                        class="btn-add"
+                        variant="primary" 
+                        style="width:200px;" 
+                        @click="salvarDadosGerais()">
+                            <i class="fa fa-database"></i>
+                            {{ salvarBtnName }}
+                      </b-button>
                   </div>
-                  
-          </b-row>              
+          </b-row>
+
         </b-container>
       </b-form>
     </div>
 </b-card>
 </b-collapse>
-<!-- <AppAccordion @data-updated="data => handleDataUpdate(data, index)"/> --> <!-- <AppAccordion @data-updated="handleDataUpdate" :idValue="idValue"  /> -->
-<AppAccordion :tables-agentes="dadosOperacoesDetalhes.lista" :idValue="idValue"/>
+
+    <!-- 
+      <AppAccordion @data-updated="data => handleDataUpdate(data, index)"/> --> <!-- <AppAccordion @data-updated="handleDataUpdate" :idValue="idValue"  /> -->
+    <AppAccordion :tables-agentes="dadosOperacoesDetalhes.lista" :idValue="idValue"/>
 
 </main>
 </template>
@@ -128,10 +131,10 @@
 <script> 
 import axios from 'axios';
 import AppAccordion    from '@/components/AppAccordion.vue';
-//import MyModal from '@/components/MyModal.vue';
-import UtilsMixin from '@/utils/UtilsMixin.js' //--- SE ASSEMELHA A HERANÇA
+// ---- import MyModal from '@/components/MyModal.vue'; ---- 
+import UtilsMixin from '@/utils/UtilsMixin.js' // ---- SE ASSEMELHA A HERANÇA
 
-const CamposForm =      {
+const CamposForm =                {
       NOME_OPERACAO: 'Nome Operação',
       MATRICULA_RESPONSAVEL: 'Matricula Responsável',
       DATA: 'Data',
@@ -139,7 +142,7 @@ const CamposForm =      {
       ALL: 'ALL'
 };
 
-export default          { 
+export default                    { 
   name: 'FormOperacoes',
   mixins: [ UtilsMixin ],
   props: {
@@ -158,21 +161,21 @@ export default          {
   computed: 
   { 
       // ----- CONSTANTE ----- 
-      IS_PAGE_EDITABLE()                {
+      IS_PAGE_EDITABLE()                    {
           // console.log( "->> FORM OPERACOES = " + this.$store.state.isPageEditable );
           // this.formDisabled = this.$store.state.isPageEditable;
           return this.$store.state.isPageEditable;
       },
-      MATRICULAS_VALIDAS()              {
+      MATRICULAS_VALIDAS()                  {
           return this.$store.state.matriculasValidas;
       },
-      BAIRROS_JP()                      {
+      BAIRROS_JP()                          {
           return this.$store.state.bairrosJP;
       },
-      LISTA_EQUIPAMENTOS_SELECIONADOS() {
+      LISTA_EQUIPAMENTOS_SELECIONADOS()     {
             return this.$store.state.equipsSelecionadosIDs;
       },
-      getAgenteKey( agente )            {
+      getAgenteKey( agente )                {
           return agente.nome + ' - ' + agente.id;
       }
   },
@@ -182,7 +185,7 @@ export default          {
         // ---- this.authenticationControl(); ---- 
         this.getListaAgentes();
 
-        if ( this.$route.name == "addOperacoes" )   {
+        if ( this.$route.name == "addOperacoes" )  {
              this.isAddOperacoesPage = true;
         }    else    {
              this.isAddOperacoesPage = false;
@@ -207,7 +210,7 @@ export default          {
     dadosOperacoes( newVal ) 
     {
         this.dadosOperacoesDetalhes = newVal;
-        // console.log( "--xxx FormOperacoes || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
+        console.log( "--xxx FormOperacoes || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
         //console.log(" === ");
         this.setDadosGerais( this.dadosOperacoesDetalhes.dadosOperacao );
         // console.log( "--FORM || DADOS LISTA ==>> " + JSON.stringify( this.dadosOperacoesDetalhes.lista ).replace( /\\/g, "" ) );
@@ -301,8 +304,9 @@ export default          {
     },
     myFunction( event )                          {
         // ----- BARRA DE SPAÇO ----- 
-        if ( ( event.keyCode == 32 ) && ( process.env.NODE_ENV === 'development' ) )        {
-               this.salvarDadosGerais( true );
+        if ( ( event.keyCode == 32 ) && 
+             ( process.env.NODE_ENV === 'development' ) )   {
+                  this.salvarDadosGerais( true );
             }
     }, 
     setFormEditable()     {
@@ -376,12 +380,12 @@ export default          {
         });
     }, 
     /* Este método também é chamado em setFormEditable() dentro do componente HistoricoOperacoes.vue*/
-    toggleFormDisabled()              {
+    toggleFormDisabled()       {
       this.formDisabled = !this.formDisabled;
     },
 
     /* FUNÇÃO USADA PELO COMPONENTE HistoricoOperacoes */
-    setDadosGerais( obj )              {
+    setDadosGerais( obj )      {
 
         // console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
         this.idValue = obj.id;
@@ -398,18 +402,20 @@ export default          {
         this.dadosGeraisOperacao.municipio            = obj.municipio;
     },
     
-    validaDadosGerais( camposForm )
+    validaDadosGerais( camposForm, isDebug = false )
     {
-      var dataOperacao = this.convertUSToBRDate( this.dadosGeraisOperacao.data );
+      if ( isDebug )
+           return true;
+      /**var dataOperacao = this.convertUSToBRDate( this.dadosGeraisOperacao.data );
       if ( this.isAddOperacoesPage )           
       {   
            if ( this.DATA_ATUAL != dataOperacao )        {
                 /** this.modalIsVisible = true;
-                this.modalMessage = "Data da operação diferente da data atual."; **/
+                this.modalMessage = "Data da operação diferente da data atual."; 
                 this.showModal( "Data da operação diferente da data atual." );
                 return false;
            } 
-      }
+      }**/
       if ( camposForm.includes( CamposForm.ALL ) )  
       {
           // console.log( "VALID = " + JSON.stringify( this.dadosGeraisOperacao ) );
@@ -466,10 +472,8 @@ export default          {
            }
       }
       if ( this.dadosGeraisOperacao.municipio == null )     {
-           /**
-            * this.modalIsVisible = true;
-           * this.modalMessage = "Município não informado."; 
-           **/
+           /** this.modalIsVisible = true;
+            ** this.modalMessage = "Município não informado."; **/
            this.showModal( "Município não informado." );
            return false;
       }
@@ -482,8 +486,9 @@ export default          {
     salvarDadosGerais()
     { 
       var isValid = false;
-      // if ( !isDebug )                   
-      isValid = ( this.validaDadosGerais( [ CamposForm.ALL ] ) );
+      // if ( !isDebug )
+      var isDebug = false;                   
+      isValid = ( this.validaDadosGerais( [ CamposForm.ALL ], isDebug  ) );
       // console.log( "- isValid = " + isValid + " ||| " + process.env.NODE_ENV );
 
       if ( !isValid )

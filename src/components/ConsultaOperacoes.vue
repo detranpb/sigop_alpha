@@ -133,7 +133,7 @@
           return STR;
       },
      buscarOperacoes()                       
-    {
+     {
         // console.log( "-buscarOperacoes ==>> " + JSON.stringify( this.filtrosValues ) + ", " + this.filtroSelecionado );
         this.novaConsultaBtnVariant = "primary";
         var sendData    =    {
@@ -151,21 +151,23 @@
              // console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         } 
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
-            .then( response =>    {
-                   var dados = response.data; // -->>> Isso chama o watcher !
-                   console.log( "Resposta API OKOKOK = " + this + " || " + JSON.stringify( dados.data ).replace( /\\/g, "" ) );
-                   
-                   if ( dados.data == null )        {
-                        this.modalIsVisible = true;
-                        this.modalMessage = "Nenhuma operação encontrada.";
-                   }
-                   if ( dados.data.length > 0 )
+             .then( response =>    {
+                    var dados = response.data; // -->>> Isso chama o watcher !
+                    // console.log( "Resposta API OKOKOK = " + this + " || " + JSON.stringify( dados ).replace( /\\/g, "" ) );
+                    // alert( dados.code );
+
+                    if ( dados.code == 99 )        {
+                        /*** this.modalIsVisible = true;
+                        this.modalMessage = ""; ***/
+                        this.showModal("Nenhuma operação encontrada.");
+                    }
+                    if ( dados.data.length > 0 )
                         this.isTableOperacoesVisible = true;
 
-                   var numOperacoes = dados.data.length;
-                   // console.log( "Num Op? = " + numOperacoes );
-                   for ( var i=0; i<numOperacoes; i++ )                
-                   {
+                    var numOperacoes = dados.data.length;
+                    // console.log( "Num Op? = " + numOperacoes );
+                    for ( var i=0; i<numOperacoes; i++ )                
+                    {
                          var strNomeOp = dados.data[i].nomeOperacao;
                          // console.log( "Nome Op. = " + strNomeOp );
                          var novoNome = this.replaceSubstrings( strNomeOp );
@@ -177,9 +179,9 @@
                    }
                    this.tableData.splice( numOperacoes, this.tableData.length - numOperacoes);
             })
-            .catch(error => {
-                  this.error = error.message;
-            }); 
+            .catch( error => {
+                    this.error = error.message;
+            } );
         } 
     }
 }

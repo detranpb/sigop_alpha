@@ -155,17 +155,19 @@ export default            {
                this.modalIsVisible = true;
         },
         validaEstatisticas()            {
-            return Object.values( this.estatisticas ).filter( v => v > 0 ).length / 
-                   Object.keys( this.estatisticas ).length >= 0.5;
+              return Object.values( this.estatisticas ).filter( v => v > 0 ).length / 
+                     Object.keys( this.estatisticas ).length >= 0.2;
         },
         cadastrarRelatorio()            {
 
-            if ( !this.validaEstatisticas() )  {
+            // alert("oi!!1");
+
+            /*if ( !this.validaEstatisticas() )  {
                   //this.msgModalIsVisible = true;
                   //this.$root.$emit( "showModal", "Atenção, verificar quantitativos nulos." );
                   this.showModal("Atenção, verificar quantitativos nulos." );
                   return;
-            } 
+            } */
             var sendData = {
                 dados: {
                   entidade: 'estatisticasOperacao',
@@ -173,6 +175,7 @@ export default            {
                   objeto: this.estatisticas,
                 }
             };
+            alert( "-- Send OBJETO XX ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
             console.log( "-- Send OBJETO XX ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
             
             axios.post( this.$SERVICES_ENDPOINT_URL , sendData )

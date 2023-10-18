@@ -3,11 +3,9 @@ import App from './App.vue'
 import router from './routes/router.js';
 import store  from './store/store.js';
 import VueCookies from 'vue-cookies';
-
 import MyModal from '@/components/MyModal.vue';
 import KnobControl from 'vue-knob-control'
   
-
 Vue.use( KnobControl )
 Vue.component( 'my-modal', MyModal );
 Vue.use( store );
@@ -23,20 +21,20 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // Make BootstrapVue available throughout your project
 Vue.use( BootstrapVue )
 // Optionally install the BootstrapVue icon components plugin
-Vue.use( IconsPlugin )
-
+Vue.use(  IconsPlugin )
 Vue.mixin({
   methods: {
-    helloWorld() {
-      alert("Hello world");
+    helloWorld()            {
+        alert("Hello world");
     }
   }
 });
 
-// -------- Constantes da Aplicação --------
+// ---- Constantes da Aplicação ----
 Vue.prototype.$appName = 'My App'
-Vue.prototype.$TOTAL_AGENTES_POR_OPERACAO = 2 // TODO: IMPOR LIMITE !!!!!!
-Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
+Vue.prototype.$TOTAL_AGENTES_POR_OPERACAO = 30 // TODO: IMPOR LIMITE !!!!!!
+// Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
+Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
 Vue.prototype.$IS_MOBILE_APP = ( document.documentElement.clientWidth < 620 ) ? true : false;	
 
 /* --------------------- FORT AWESOME ICONS -----------------------*/

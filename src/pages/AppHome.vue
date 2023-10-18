@@ -10,7 +10,7 @@
     <br>
     <br>
 
-  
+    <AppHomeMobile v-if="this.$IS_MOBILE_APP"></AppHomeMobile>
     <b-container v-if="!this.$IS_MOBILE_APP" class="bv-example-row" style="background-color: rgb(213, 218, 219);height: 60%;" >
     <b-row>
       <br>
@@ -41,6 +41,7 @@
 <script>
 import Chart from 'chart.js/auto';
 import MyModal from '@/components/MyModal.vue';
+import AppHomeMobile from '@/pages/AppHomeMobile.vue';
  // import AppDashboard from '@/components/AppDashboard.vue';
 import axios from 'axios';
 export default      
@@ -48,6 +49,7 @@ export default
   name: 'RelatoriosOperacoes',
   components:   {
       MyModal,
+      AppHomeMobile
       // AppDashboard
     // DisplayOperacoes
   },
@@ -60,9 +62,9 @@ export default
   mounted()       
   {
    
-    if ( this.$IS_MOBILE_APP )  {
+    /*if ( this.$IS_MOBILE_APP )  {
          this.$router.push({ path:'/add-relatorio-operacao', replace:true });
-    }
+    }*/
     const CHART_COLORS = {
       red: 'rgb(255, 99, 132)',
       orange: 'rgb(255, 159, 64)',
