@@ -115,44 +115,38 @@ export default
     // Get the MyHeader component instance.
     // Reload the key value.
   },
-  created()		{
+  created()			{
 	// alert( "mobile? " + this.$IS_MOBILE_APP );
 	if ( this.$IS_MOBILE_APP )		
 		 this.APLICATION_NAME = "SIGOP - DETRAN-PB";
-	else 
-		this.APLICATION_NAME = "Sistema de Gestão Operacional de Policiamento (SIGOP)";
+	else this.APLICATION_NAME = "Sistema de Gestão Operacional de Policiamento (SIGOP)";
 	  	 
   },
-  updated() 	{
+  updated() 		{
 	  // console.log("kkk= " + this.$route.name  );
-	   
-	  
 	  // alert( "- TESTE = " + this.$route.name );
       /*this.$router.history.listen( (newLocation) => {
-        console.log( newLocation.path );
-      })*/
+        console.log( newLocation.path ); })*/
   },
-  methods:		{
+  methods:			{
 
-		logout()					{
-			console.log("-Saindo... ");
+		logout()				    {
 			const isAuth = false;
         	localStorage.setItem( 'isAuthenticated', isAuth );
-
 			const cookieAuth = this.$cookies.get('isAuthenticated');
-			console.log( "-LOGOUT || Cookie? " + cookieAuth );
+			console.log( cookieAuth );
 			this.$cookies.remove('isAuthenticated');
 		},
-		openMenu: function()	  {
+		openMenu: function()	    { 
 			this.menuActive = true;
 		},
-		closeMenu: function()	   {
+		closeMenu: function()	    {
 			this.menuActive = false;
 		},
 		showRouteName() 			{
 			alert( this.$route.name );
 		}
-}
+	}
 }
  
 </script>

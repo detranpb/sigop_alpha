@@ -189,10 +189,10 @@
           this.usuMatriculaLocal = newValue;
           // alert("-AKI = " + this.usuMatriculaLocal );
         },
-        compTableItens( value )   {
+        /* compTableItens( value )   {
           if ( value )
                console.log( "COMPS !! >>> " + JSON.stringify( value ) );
-        }
+        }*/
     },
     computed:
     {  
@@ -396,16 +396,16 @@
       getImageUrl() 
       {
           // Logic to determine the image URL based on equipSelecionado
-          if ( this.equipSelecionado === 'Viatura' )          {
+          if ( this.equipSelecionado === 'Viatura' )        {
                return require('@/assets/viatura.png');
           } 
-          else if ( this.equipSelecionado === 'Talonário' )   {
+          else if ( this.equipSelecionado === 'Talonário' ) {
                return require('@/assets/talonario.png');
           } 
-          else if ( this.equipSelecionado === 'Rádio HT' )    {
+          else if ( this.equipSelecionado === 'Rádio HT' )  {
                return require('@/assets/radio.jpg');
           } 
-          else if ( this.equipSelecionado === 'Etilômetro' )  {
+          else if ( this.equipSelecionado === 'Etilômetro') {
                return require('@/assets/etilometro.png');
           } 
           else if ( this.equipSelecionado === 'Colete' )      {
@@ -503,11 +503,11 @@
       },
       getDatalistId( type ) 
       {
-        return `id-equips-list-${type}`;
+          return `id-equips-list-${type}`;
       },
       
       /* Lista com as opções disponíveis, excluindo-se aqueles IDs de equipamento já escolhidos. */
-      getFilteredDatalistOptions( type )        {
+      getFilteredDatalistOptions( type )       {
           return this.getDatalistOptions( type ).filter( item => !this.inputEquipIDAtivos.includes( item ) );
       },
       /* De acordo com o TIPO do equipamento, será filtrado os objetos específicos para 

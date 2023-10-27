@@ -9,12 +9,12 @@
     <!-- <AppDashboard></AppDashboard> -->
     <br>
     <br>
+    <!-- <AppHistogram></AppHistogram> -->
 
-    <AppHomeMobile v-if="this.$IS_MOBILE_APP"></AppHomeMobile>
+    <!-- <AppHomeMobile v-if="this.$IS_MOBILE_APP"></AppHomeMobile> -->
     <b-container v-if="!this.$IS_MOBILE_APP" class="bv-example-row" style="background-color: rgb(213, 218, 219);height: 60%;" >
     <b-row>
-      <br>
-      <br>
+      <br> <br>
       <b-col>
           <div style="position: relative; height: 10vh; width:30vw">
             <canvas id="chartBar"></canvas>
@@ -31,7 +31,7 @@
           </div>
       </b-col>
     </b-row>
-    </b-container>
+    </b-container> 
    
 
    
@@ -41,19 +41,21 @@
 <script>
 import Chart from 'chart.js/auto';
 import MyModal from '@/components/MyModal.vue';
-import AppHomeMobile from '@/pages/AppHomeMobile.vue';
- // import AppDashboard from '@/components/AppDashboard.vue';
+// import AppHistogram from '@/components/AppHistogram.vue';
+//import AppHomeMobile from '@/pages/AppHomeMobile.vue';
+// import AppDashboard from '@/components/AppDashboard.vue';
 import axios from 'axios';
 export default      
 {
   name: 'RelatoriosOperacoes',
-  components:   {
+  components:       {
       MyModal,
-      AppHomeMobile
-      // AppDashboard
-    // DisplayOperacoes
+   // AppHistogram
+   //   AppHomeMobile,
+      //AppDashboard
+   // DisplayOperacoes
   },
-  data()        {
+  data()            {
       return {
           modalIsVisible: false,
           listaAgentes: [],
@@ -62,9 +64,10 @@ export default
   mounted()       
   {
    
-    /*if ( this.$IS_MOBILE_APP )  {
+    // Redireciona para relatório
+    if ( this.$IS_MOBILE_APP )  {
          this.$router.push({ path:'/add-relatorio-operacao', replace:true });
-    }*/
+    }
     const CHART_COLORS = {
       red: 'rgb(255, 99, 132)',
       orange: 'rgb(255, 159, 64)',

@@ -1,6 +1,7 @@
 <template>
 <main class="main-container">
 
+
 <div class="mobile-centralizer">  
   <b-button class="btnConsulta" size="sm" :variant="novaConsultaBtnVariant" @click="novaConsulta()">
         <i class="fa fa-refresh" aria-hidden="true"></i> Nova Consulta
@@ -8,7 +9,8 @@
   <b-button class="btnConsulta" size="sm" v-b-toggle.collapse-1 variant="primary"> 
         <i class="fa fa-sort"></i> Painél de Consulta 
   </b-button>
-</div>  
+</div>
+
 
 <b-collapse id="collapse-1" v-model="isPainelOn" class="mt-2" :key="resetComponentKey">
   <b-card>
@@ -119,18 +121,18 @@
       },
       handleRowClicked( item, index ) 
       {
-          this.isPainelOn = false;
-          this.selectedRowId = item.id;
-          this.$emit('table-updated', this.tableData[ index ] ); 
-          // alert( JSON.stringify( this.tableData[ index ] ) );
+         this.isPainelOn = false;
+         this.selectedRowId = item.id;
+         this.$emit('table-updated', this.tableData[ index ] ); 
+         // alert( JSON.stringify( this.tableData[ index ] ) );
       },
       replaceSubstrings( STR )
       {
-          const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
-          const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
-          for ( let i = 0; i < V1.length; i++ )
-                STR = STR.split( V1[i] ).join(V2[i] );
-          return STR;
+         const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
+         const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
+         for ( let i = 0; i < V1.length; i++ )
+               STR = STR.split( V1[i] ).join(V2[i] );
+         return STR;
       },
      buscarOperacoes()                       
      {

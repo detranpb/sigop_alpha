@@ -52,6 +52,7 @@ export default
         this.$root.$on('showModal', ( modalMsg ) => {
             this.appModalIsVisible = true;
             this.appModalMessage = modalMsg;
+            // alert( "-show? " + this.appModalIsVisible );
         })
     },
     methods:    {
@@ -64,12 +65,13 @@ export default
         },*/
         handleCloseModal()     {
             this.appModalIsVisible = false;
+            // console.log( "-show? " + this.appModalIsVisible );
         },
         checkAuthentication()  {
             
-            console.log("- Page name = " + this.$route.name  );
+           // console.log("- Page name = " + this.$route.name  );
             const cookieAuth = this.$cookies.get('isAuthenticated');
-            console.log( "-Cookie? " + cookieAuth );
+            console.log( cookieAuth );
             
               if ( this.$route.name != "appLogin" )      {
                    /*** if ( ( cookieAuth == false )||( cookieAuth == null ) )       {

@@ -10,20 +10,20 @@
            Adicione a listagem de agentes e seus respectivos equipamentos abaixo.
       </div>
  
-      <!-- CASO Página de Adicionar Operações -->
+      <!-- BTN-1 CASO Página de Adicionar Operações -->
       <div v-if="this.isAddOperacoesPage" class="btn-add-agente"> 
         <!-- Dados gerais -->
-         <b-button v-if="( IS_PAGE_EDITABLE && ( this.idOperacao != null ) )" @click="addAccordionItem" variant="success">
+        <b-button v-if="( IS_PAGE_EDITABLE && ( this.idOperacao != null ) )" @click="addAccordionItem" variant="success">
               <i class="fas fa-plus"></i> Adicionar Agente
-         </b-button>
+        </b-button>
       </div>
-      <!-- CASO Página contrário  -->
-      <div v-else class="btn-add-agente"> 
-        <!-- Dados gerais -->
+
+      <!-- -- -- -- BTN-2 CASO Página contrário 
+      <div v-else class="btn-add-agente">  
          <b-button v-if="( IS_PAGE_EDITABLE )" @click="addAccordionItem" variant="success">
               <i class="fas fa-plus"></i> Adicionar Agente
          </b-button>
-      </div>
+      </div> -- -- -- -->
 
       <!-- key ==>> É como um id, serve para dar um reload no componenente. -->
       <div v-for="( item, index ) in accordionItems" :key="index">
@@ -138,6 +138,8 @@ export default
 
           this.nAgentes = matriculas.length;
           // console.log("-- AppAccordion || N° agentes ==>> " + this.nAgentes );
+
+          console.log( "--AQUI >>>> " + JSON.stringify( newTables ) );
           
           for ( var i=0; i<this.nAgentes; i++ )  {
                 const newItem =   {
@@ -340,7 +342,7 @@ export default
       },
       addAccordionItem()       
       { 
-        if ( this.idOperacao == null )    {
+        if ( ( this.isAddOperacoesPage ) && ( this.idOperacao == null ) )    {
              this.showModal( "Dados gerais da operação ainda não foram salvos." );
         }    else    {
               const newItem = {
@@ -401,7 +403,7 @@ export default
                       this.modalMessage = "Matrícula/Agente inválida.";**/
                       // alert("ERRO");
                       this.showModal( "Matrícula/Agente inválida." );
-                } else {
+                }  else  {
                       this.matriculasValidadas[ indexMatricula ] = true;
                 }
                 /* else {  

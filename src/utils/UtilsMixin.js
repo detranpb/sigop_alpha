@@ -56,11 +56,17 @@ const UtilsMixin = {
         },
         replaceSubstrings( STR )
         {
-            const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5" ];
-            const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ" ];
+            const V1 = [ "u00c7u00c3O", "u00d5", "u00e1", "u00e9", "u00ed", "u00f3", "u00fa", "u00e3", "u00f5", "u00e7" ];
+            const V2 = [ "ÇÃO", "Õ", "á", "é", "í", "ó", "ú", "ã", "õ", "ç" ];
             for ( let i = 0; i < V1.length; i++ )
                   STR = STR.split( V1[i] ).join(V2[i] );
             return STR;
+        },
+        /* Retorna o elemento de um array, com uma ocorrencia pesquisada*/
+        findStringWithOccurrences(arr, targetOccurrences) {
+            return arr.find((string, index, array) => 
+                array.filter(item => item === string).length === targetOccurrences
+            ) || null;
         },
         /* Será chamada esta função sempre que for alterada a página atual */
         getDataOnUpdatePageAPI()                {

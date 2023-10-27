@@ -6,7 +6,7 @@
     <div class="btn-container">
          
         <!-- Botao caso isAddOperacoesPage -->
-        <b-button v-if="this.isAddOperacoesPage" style="width: 200px" class="fade-in-button btn-add" v-b-toggle.collapse-1 variant="success" @click="openDadosGerais()">
+        <b-button v-if="this.isAddOperacoesPage" style="width: 200px" class="fade-in-button btn-add" v-b-toggle.collapse-dados-gerais variant="success" @click="openDadosGerais()">
            <i v-if="collapseDadosOperacaoOn" class="fa-solid fa-angle-up"></i>
            <i v-else class="fa-solid fa-angle-down"></i> Dados Gerais
         </b-button>
@@ -17,7 +17,7 @@
         </b-button>
     </div>
 
-    <b-collapse visible id="collapse-1" class="mt-2" v-model="collapseDadosOperacaoOn"> 
+    <b-collapse visible id="collapse-dados-gerais" class="mt-2" v-model="collapseDadosOperacaoOn"> 
     <b-card>
 
     <div>
@@ -35,13 +35,12 @@
                 <!-- COL. 2 -->
                 <b-col>
                     <label class="titulo-operacao" for="inline-form-input-name"> Matrícula/Responsável: </label>
-                  <b-form-input  autocomplete="off" 
-                                 list="my-list-id"
-                                 placeholder="Insira Matrícula/Responsável"
-                                 v-model="agenteResponsavel" @blur="validaAgente" :disabled="formDisabled" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0 custom-input"></b-form-input>
-                  <datalist id="my-list-id">
-                      <option v-for="a in this.agentesLabelBD" :key="a.nome">{{ a }}</option>
-                  </datalist>
+                    <b-form-input  autocomplete="off" 
+                      list="my-list-id" placeholder="Insira Matrícula/Responsável"
+                      v-model="agenteResponsavel" @blur="validaAgente" :disabled="formDisabled" id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0 custom-input"></b-form-input>
+                      <datalist id="my-list-id">
+                          <option v-for="a in this.agentesLabelBD" :key="a.nome"> {{ a }} </option>
+                      </datalist>
                 </b-col>
                
                 <!-- COL. 3 -->
@@ -93,8 +92,8 @@
                   <label class="titulo-operacao" for="inline-form-input-name"> Observações: </label>
                   <b-form-textarea 
                      placeholder="Insira observações necessárias..."
-                     id="textarea" v-model="dadosGeraisOperacao.observacoes" :disabled="formDisabled"  rows="3" max-rows="6">
-                  </b-form-textarea>
+                     id="textarea" v-model="dadosGeraisOperacao.observacao" :disabled="formDisabled"  rows="3" max-rows="6">
+                  </b-form-textarea> 
               </b-col>
           </b-row>
           
@@ -102,9 +101,9 @@
           <b-row> 
                   <!-- Dados gerais -->
                   <div class="btn-container">
-                      <b-button 
+                      <b-button
                         v-if="IS_PAGE_EDITABLE" 
-                        :disabled="formDisabled" 
+                        :disabled="formDisabled || isButtonDisabled" 
                         class="btn-add"
                         variant="primary" 
                         style="width:200px;" 
@@ -160,22 +159,25 @@ export default                    {
   }, 
   computed: 
   { 
-      // ----- CONSTANTE ----- 
-      IS_PAGE_EDITABLE()                    {
+      // ----- CONSTANTE ---- 
+      IS_PAGE_EDITABLE()     {
           // console.log( "->> FORM OPERACOES = " + this.$store.state.isPageEditable );
           // this.formDisabled = this.$store.state.isPageEditable;
           return this.$store.state.isPageEditable;
       },
-      MATRICULAS_VALIDAS()                  {
+      MATRICULAS_ROTULOS()                                {
+          return this.$store.state.matriculasNomesAgentes;
+      },
+      MATRICULAS_VALIDAS()   {
           return this.$store.state.matriculasValidas;
       },
-      BAIRROS_JP()                          {
+      BAIRROS_JP()           {
           return this.$store.state.bairrosJP;
       },
-      LISTA_EQUIPAMENTOS_SELECIONADOS()     {
+      LISTA_EQUIPAMENTOS_SELECIONADOS()   {
             return this.$store.state.equipsSelecionadosIDs;
       },
-      getAgenteKey( agente )                {
+      getAgenteKey( agente )        {
           return agente.nome + ' - ' + agente.id;
       }
   },
@@ -184,7 +186,7 @@ export default                    {
         // ---- console.log( JSON.stringify( this.BAIRROS_JP ) ); ---- 
         // ---- this.authenticationControl(); ---- 
         this.getListaAgentes();
-
+        
         if ( this.$route.name == "addOperacoes" )  {
              this.isAddOperacoesPage = true;
         }    else    {
@@ -204,15 +206,30 @@ export default                    {
       // this.$store.commit('setIsPageEditable', false );
       this.formDisabled = !this.IS_PAGE_EDITABLE;
   },
-  watch:        {
-    
+  watch:                                              
+  {
     // -- Chamado em Histórico Operações, quando o usuário selectiona na tabela, para detalhar os dados
     dadosOperacoes( newVal ) 
     {
+        console.log("----- GET AGENTES -----");
         this.dadosOperacoesDetalhes = newVal;
-        console.log( "--xxx FormOperacoes || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
-        //console.log(" === ");
+        console.log( "--xxx FormOperacoes AQUI || dados ==>> " + JSON.stringify( this.dadosOperacoesDetalhes ).replace( /\\/g, "" ) );
         this.setDadosGerais( this.dadosOperacoesDetalhes.dadosOperacao );
+        var matriculaStr = this.dadosOperacoesDetalhes.dadosOperacao.matriculaResponsavel + "";
+        console.log( "-- STR ===>>>" + matriculaStr );
+
+        const hasAgente = this.MATRICULAS_ROTULOS.find(item => item.includes(matriculaStr));
+        if ( hasAgente )  {
+             this.agenteResponsavel = hasAgente;
+        }
+        /** ** for( var i=0; i<this.MATRICULAS_ROTULOS.length; i++ ) {
+              var hasAgente = this.MATRICULAS_ROTULOS[ i ].includes( matriculaStr );
+              console.log( this.MATRICULAS_ROTULOS[ i ] + " || " + matriculaStr + "|| i = " + i + "|| " + hasAgente );
+              if ( hasAgente )     {
+                  this.agenteResponsavel = this.MATRICULAS_ROTULOS[ i ];
+                  console.log("-AQUI !!!" + this.agenteResponsavel );
+        } } ** **/
+        // alert( "--MATRICULA ==>>> " + this.agenteResponsavel );
         // console.log( "--FORM || DADOS LISTA ==>> " + JSON.stringify( this.dadosOperacoesDetalhes.lista ).replace( /\\/g, "" ) );
     },
     responseData :   
@@ -221,7 +238,6 @@ export default                    {
         {
           const munVet = Object.values( newObj.dados );
           // console.log( munVet );
-
           // CASO API CONSUMIDA FOI ...
           for ( let i = 1; i < munVet.length; i++ ) 
                 this.municipios.push( munVet[i] );
@@ -232,7 +248,7 @@ export default                    {
   data() 
   {
     return                      {
-      
+      isButtonDisabled: false,
       collapseDadosOperacaoOn: true,
       formDisabled: false,
       agentesLabelBD: [],  /* Vetor de strings matricula - nome */
@@ -257,38 +273,34 @@ export default                    {
       {
           nomeOperacao: "",
           data: '00-00-0000',
-          bairro: null,
-          kmIni: '0.0',
-          kmFim: '0.0',
+          bairro: "",
+          hraIni: '0.0',
+          hraFim: '0.0',
           matriculaResponsavel: "00000",
-          hraIni: null,
-          hraFim: null,
-          municipio: null,
-          observacoes: ""
+          /*hraIni: null,
+          hraFim: null,*/
+          municipio: "",
+          observacao: ""
       },
       municipios: [
-          { value: 1, text: 'João Pessoa' },
-          { value: 2, text: 'Cabedelo' },
-          { value: 3, text: 'Bayeux'   },
-          { value: 4, text: 'Santa Rita' },
-          { value: 5, text: 'Campina Grande' },
-          { value: 6, text: 'Outro' },
+          { value: "JOAO PESSOA", text: "JOAO PESSOA" },
+          { value: "CABEDELO", text: "CABEDELO" },
+          { value: "BAYEUX", text: "BAYEUX"   },
+          { value: "SANTA RITA", text: "SANTA RITA" },
+          { value: "CAMPINA GRANDE", text: "CAMPINA GRANDE" },
+          { value: "OUTRO", text: "OUTRO" },
       ],
-      bairros: [
-          { value: null, text: 'Selecione um bairro.' },
-          { value: 1, text: 'Miramar' },
-          { value: 2, text: 'Bessa'   },
-          { value: 2, text: 'Manaira' },
-      ],
+      bairros: [ ],
       agenteResponsavel: "",
-      agentes: [ { value: 1, text: 'Agente 1' },
-                 { value: 2, text: 'Agente 2' },
-                 { value: 2, text: 'Agente 3' },
-                 { value: 2, text: 'Agente 4' },
-                 { value: 2, text: 'Agente 5' },
-                 { value: 2, text: 'Agente 6' },
-                 { value: 2, text: 'Agente 7' },
-                 { value: 2, text: 'Agente 8' } ]
+      agentes: [ 
+          { value: 1, text: 'Agente 1' },
+          { value: 2, text: 'Agente 2' },
+          { value: 2, text: 'Agente 3' },
+          { value: 2, text: 'Agente 4' },
+          { value: 2, text: 'Agente 5' },
+          { value: 2, text: 'Agente 6' },
+          { value: 2, text: 'Agente 7' },
+          { value: 2, text: 'Agente 8' } ]
   }
 }, 
  methods:  {
@@ -297,28 +309,30 @@ export default                    {
         // const equipamentosPorAgente = updatedData.equipamentosPorAgente;
         // console.log( "X[ " + this.ID + "] = " + updatedData );
         // console.log( "FormOperacoes[0] = " + updatedData.usuMatricula + " || " + equipamentosPorAgente[0] );
-    },*/
+    },*/ 
     close()                                      {
-        console.log( "--- CLOSE !!!!! " );
+        // console.log( "--- CLOSE !!!!! " );
         this.$refs.collapse.close();
     },
     myFunction( event )                          {
         // ----- BARRA DE SPAÇO ----- 
-        if ( ( event.keyCode == 32 ) && 
+        return event;
+        /*if ( ( event.keyCode == 32 ) && 
              ( process.env.NODE_ENV === 'development' ) )   {
-                  this.salvarDadosGerais( true );
-            }
+                  // this.salvarDadosGerais( true );
+                  this.collapseDadosOperacaoOn = false;
+            }*/
     }, 
-    setFormEditable()     {
+    setFormEditable()              {
         this.formDisabled = this.IS_PAGE_EDITABLE;
     },
-    handleCloseModal()    {
+    handleCloseModal()             {
         this.modalIsVisible = false;
     },
-    handleAcceptModal()   {
+    handleAcceptModal()              {
           this.modalIsVisible = false;
     },
-    handleRejectModal()   {
+    handleRejectModal()              {
           this.modalIsVisible = false;
     },
     validaAgente()
@@ -339,69 +353,71 @@ export default                    {
           // console.log( "-Matricula = " + this.dadosGeraisOperacao.matriculaResponsavel );
       }
     },
-    getListaAgentes() 
+    /** buscaMatricula - retorna a string MATRICULA - NOME, de acordo com o parametro passado 
+     * buscaMatricula apenas é passada na operação de Historico
+    */
+    getListaAgentes( buscaMatricula = " ") 
     {
       var sendData =  {
           dados: {
-              entidade: 'agente',
-              operacao: 'consultar'
+                entidade: 'agente',
+                operacao: 'consultar'
           }
       };
-      // console.log( "SEND >>> " + JSON.stringify( sendData ));
+       console.log( "SEND >>> " + JSON.stringify( sendData ));
       axios.post( this.$SERVICES_ENDPOINT_URL, sendData )
-        .then( response => {
-          
+           .then( response => {
             // Assuming the response data is an array of objects with 'value' and 'text' properties
-            // console.log( "DATA >>> " + JSON.stringify( response.data ) );
-
-            if ( ( typeof response.data ) == 'object' )  {
+             console.log( "DATA >>> " + JSON.stringify( response.data ) );
+            if ( ( typeof response.data ) == 'object' )             {
                    var agentes = response.data;
-                   /* console.log('-DATA == ' + JSON.stringify(  data )  );
-                   /* console.log( "MSG = " + data.message + "|| code= " + data.code );*/
-                   if ( agentes.code == 0 )  {
-                        
+                   /** console.log('-DATA == ' + JSON.stringify(  data )  ); console.log( "MSG = " + data.message + "|| code= " + data.code ); **/
+                   if ( agentes.code == 0 )          {
                         this.agentesBD = agentes.data;
-                        for( var i=0; i<this.agentesBD.length; i++)  {
-                             this.agentesLabelBD[i] = this.agentesBD[ i ].matricula + " - " + this.agentesBD[ i ].nome;               
-                             // console.log(  this.agentesLabelBD[i] );
+                        for ( var i=0; i<this.agentesBD.length; i++ )  {
+                              this.agentesLabelBD[i] = this.agentesBD[ i ].matricula + " - " + this.agentesBD[ i ].nome;               
+                              if ( buscaMatricula == this.agentesBD[ i ].matricula )         {
+                                   this.matriculaResponsavel = this.agentesLabelBD[i];
+                                   console.log( buscaMatricula + " || " + this.agentesBD[ i ].matricula + " ||| AQUI >> " + this.matriculaResponsavel );
+                              }
+                              console.log(  this.agentesLabelBD[i] );
                         }
-                   } 
+                   }
             }
-
             /****
              this.selectOptions = response.data.map(item => ({
               value: item.value,
               text: item.text,
-            }));**/
+            })); ****/
            
         })
         .catch(error => {
           console.error(error);
-        });
+        }); 
     }, 
     /* Este método também é chamado em setFormEditable() dentro do componente HistoricoOperacoes.vue*/
-    toggleFormDisabled()       {
-      this.formDisabled = !this.formDisabled;
-    },
-
+    toggleFormDisabled()      {
+        this.formDisabled = !this.formDisabled;
+    }, 
     /* FUNÇÃO USADA PELO COMPONENTE HistoricoOperacoes */
-    setDadosGerais( obj )      {
-
-        // console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
-        this.idValue = obj.id;
-        // console.log( "this.idValue ==>> " + this.idValue );
-        this.dadosGeraisOperacao.bairro               = obj.bairro;        
-        this.dadosGeraisOperacao.data                 = obj.data;          
-        this.dadosGeraisOperacao.nomeOperacao         = this.replaceSubstrings( obj.nomeOperacao );  
-        this.dadosGeraisOperacao.matriculaResponsavel = obj.matriculaResponsavel; 
-        this.dadosGeraisOperacao.observacoes          = obj.observacoes;
-        this.dadosGeraisOperacao.kmIni                = obj.kmIni;
-        this.dadosGeraisOperacao.hraFim               = obj.hraFim;
-        this.dadosGeraisOperacao.hraIni               = obj.hraIni;
-        this.dadosGeraisOperacao.kmFim                = obj.kmFim;
-        this.dadosGeraisOperacao.municipio            = obj.municipio;
+    setDadosGerais( obj )   {
+          console.log( "-- FormOperacoes || SET-DADOS ==>> " + JSON.stringify( obj ).replace( /\\/g, "" ) + "ID => " + this.idValue );
+          this.idValue = obj.id;
+          // alert( this.replaceSubstrings( obj.observacao ) );
+          // var x = this.findStringWithOccurrences( this.agentesLabelBD, obj.matriculaResponsavel );
+          // console.log( "this.idValue ==>> " + this.idValue );
+          this.dadosGeraisOperacao.bairro       = obj.bairro;        
+          this.dadosGeraisOperacao.data         = obj.data;          
+          this.dadosGeraisOperacao.nomeOperacao = this.replaceSubstrings( obj.nomeOperacao );  
+          // this.dadosGeraisOperacao.matriculaResponsavel = this.buscaAgenteHistorico( obj );
+          // alert( this.dadosGeraisOperacao.matriculaResponsavel );
+          this.dadosGeraisOperacao.observacao   = this.replaceSubstrings( obj.observacao );
+          this.dadosGeraisOperacao.hraIni       = obj.hraIni;
+          this.dadosGeraisOperacao.hraFim       = obj.hraFim;
+          this.dadosGeraisOperacao.hraIni       = obj.hraIni;
+          this.dadosGeraisOperacao.hraFim       = obj.hraFim;
+          this.dadosGeraisOperacao.municipio    = this.replaceSubstrings( obj.municipio );
     },
-    
     validaDadosGerais( camposForm, isDebug = false )
     {
       if ( isDebug )
@@ -432,46 +448,46 @@ export default                    {
       {
           if ( ( this.agenteResponsavel == null ) || ( this.agenteResponsavel.length <= 10 ) )
           {
-                /* this.modalIsVisible = true;
-                this.modalMessage = "Matrícula/Responsável inválida."; */
-                this.showModal( "Matrícula/Responsável inválida." );
-                return false;
-          } else {
+              /*** this.modalIsVisible = true;
+              this.modalMessage = "Matrícula/Responsável inválida."; ***/
+              this.showModal( "Matrícula/Responsável inválida." );
+              return false;
+          }   else   {
               this.dadosGeraisOperacao.matriculaResponsavel = this.agenteResponsavel.split(" - ")[0];
               // console.log( "-Matricula = " + this.dadosGeraisOperacao.matriculaResponsavel );
           }
       }
       if ( camposForm.includes( CamposForm.ALL ) )  
       {
-        if ( this.dadosGeraisOperacao.data   == "00-00-0000" )          {
+        if ( this.dadosGeraisOperacao.data   == "00-00-0000" )      {
              /*this.modalIsVisible = true;
              this.modalMessage = "Data da operação não informada.";*/
              this.showModal( "Data da operação não informada." );
              return false;
         }
       }
-      if ( this.dadosGeraisOperacao.bairro == null  )             {
+      
+
+      if ( this.dadosGeraisOperacao.bairro == null  )               {
            /* this.modalIsVisible = true;  || this.modalMessage = "Bairro não informada."; */
            this.showModal( "Bairro não informada." );
            return false;
       }       
-      if ( this.dadosGeraisOperacao.hraIni == null )              {
+      if ( this.dadosGeraisOperacao.hraIni == null )                {
            /**this.modalIsVisible = true;  || this.modalMessage = "Hora inicial não informada.";*/
            this.showModal( "Hora inicial não informada." );
            return false;
       }
       if ( !this.isAddOperacoesPage )   
       {
-           if ( this.dadosGeraisOperacao.hraFim == null )        {
-                /***
-                 * this.modalIsVisible = true;
-                 * this.modalMessage = "Hora final não informada.";
-                 ***/
+           if ( this.dadosGeraisOperacao.hraFim == null )           {  
+                /* this.modalIsVisible = true;
+                 * this.modalMessage = "Hora final não informada."; */
                 this.showModal( "Hora final não informada." );
                 return false;
            }
       }
-      if ( this.dadosGeraisOperacao.municipio == null )     {
+      if ( this.dadosGeraisOperacao.municipio == null )           {
            /** this.modalIsVisible = true;
             ** this.modalMessage = "Município não informado."; **/
            this.showModal( "Município não informado." );
@@ -484,7 +500,10 @@ export default                    {
       this.$refs.input.style.color = 'red';
     },
     salvarDadosGerais()
-    { 
+    {
+      if ( this.isButtonDisabled ) return;
+           this.isButtonDisabled = true;
+      
       var isValid = false;
       // if ( !isDebug )
       var isDebug = false;                   
@@ -494,8 +513,8 @@ export default                    {
       if ( !isValid )
             return false;
 
-      var   sendData = {
-            dados: {
+      var   sendData  =  {
+            dados:  {
                 entidade: 'operacao',
                 operacao: ( this.isAddOperacoesPage == true) ? 'cadastrar' : 'atualizar',
                 objeto: null,
@@ -513,16 +532,14 @@ export default                    {
        if ( this.isAddOperacoesPage == false ) 
             sendData.dados.objeto.id = this.idValue;
 
-        // console.log( "-- SALVAR ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
-        
-        axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
-             .then( response => {
+       console.log( "-- SALVAR ==>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+       axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
+            .then( response => {
  
-              if ( ( typeof response.data ) == 'object' )  {
+            if ( ( typeof response.data ) == 'object' )          {
                     var data = response.data;
-                    /* console.log('-DATA == ' + JSON.stringify(  data )  );
-                    console.log( "MSG = " + data.message + "|| code= " + data.code );**/
-
+                    console.log('-RESPONSE == ' + JSON.stringify(  data )  );
+                    /* console.log( "MSG = " + data.message + "|| code= " + data.code ); */
                     if ( data.code == 0 )   
                     {
                         // console.log( "ID = " + data.data.id );
@@ -534,22 +551,21 @@ export default                    {
 
                         if ( this.isAddOperacoesPage )
                              this.showModal( "Operação salva com sucesso! (ID = " + this.idValue + ")" );
-                        else 
-                             this.showModal( "Operação atualizada com sucesso! (ID = " + this.idValue + ")" );
+                        else this.showModal( "Operação atualizada com sucesso! (ID = " + this.idValue + ")" );
 
-                         /***** if ( this.isAddOperacoesPage )  {
-                                setTimeout( () => {
-                                    this.showModal( "Adicione a lista de Agentes/Equipamentos." );
-                                    // tempo++; }, 2000 ); }*****/
-                         
-                    }    else   {
+                        setTimeout(() => {
+                          // Após 2 segundos, disabilita o botão
+                          this.isButtonDisabled = false;
+                        }, 2000); 
+
+                    }    else    {
                          this.showModal( response.data.message );
                     }
               }          
-            })
-            .catch(error => {
-              this.error = error.message;
-            });
+            } )
+            .catch (error => {
+                this.error = error.message;
+            } );
 
             if (  this.isAddOperacoesPage  )
                   this.toggleFormDisabled();

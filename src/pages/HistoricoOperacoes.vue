@@ -1,13 +1,11 @@
-<template>
-<!-- O main sempre vai ser 100% do viewheitgh - (cabeçalho+rodapé)-->
+<template><!-- O main sempre vai ser 100% do viewheitgh - (cabeçalho+rodapé) -->
   <main>
   <b-card>
       <h4 style="margin: 15px;" class="card-title text-center titulo-paginas"> Histórico de Operações </h4> 
-      <!-- <div>
+      <!--<div>
           <b-button size="sm" variant="primary" class="float-center" @click="novaConsulta()">
                 Nova Consulta
-          </b-button> </div>-->
-      
+          </b-button> </div> -->
       <!-- Consulta de Operações
       <ConsultaOperacoes @table-updated="rowData => handleOperacaoSelected( rowData )" /> -->
 
@@ -19,21 +17,28 @@
       <div v-if="isDetalharOperacoesOn">
             <b-tabs card>
                 <b-tabs card v-model="activeTab">
-                    <b-tab title="Operação 1"> 
-
+                    <b-tab title="Operação 1">
                         <ToogleSwitch class="habilita-edicao" :checked="this.isEditable" @toogle-update="data => toggle( data )" label="Habilitar Edição"/>
 
-                        <!-- key: serve para atualizar o status de um componente, ou criar uma nova instância -->
+                        <!-- key: serve para atualizar o status de um componente, ou criar uma nova instância 
                         <FormOperacoes 
-                          :dadosOperacoes="this.responseOperacoesData.data" 
-                          :key="filtrosValues.dataOp" ref="setFormEditableRef"/> <!-- REF MÉTODO USADO para ser chaado no filho-->
+                            :data="formID"
+                            :dadosOperacoes="this.responseOperacoesData.data" 
+                            :key="filtrosValues.dataOp" ref="setFormEditableRef"/> REF MÉTODO USADO para ser chaado no filho-->
+
+                            <FormOperacoes 
+                            
+                            :dadosOperacoes="this.responseOperacoesData.data" 
+                            :key="formID" ref="setFormEditableRef"/> <!-- REF MÉTODO USADO para ser chaado no filho-->    
+
 
                       </b-tab>
                   </b-tabs>
+                  
                   <template #empty>
-                    <div class="text-center text-muted"> 
-                        Sem operações abertas.<br>  Abra uma nova aba de operações com o botão acima.
-                    </div>
+                     <div class="text-center text-muted"> 
+                          Sem operações abertas.<br>  Abra uma nova aba de operações com o botão acima.
+                     </div>
                   </template>
               </b-tabs>
         </div>
@@ -100,6 +105,7 @@ export default
           idTab: 1, // ID da Tab que deve ser ativada
           tabs: [],
           tabCounter: 0,
+          formID: 0,
           responseOperacoesData: Object,
           isEditable: false,
           isTableOperacoesVisible: false,
@@ -140,6 +146,7 @@ export default
       handleOperacaoSelected( data )        {
           if ( data != undefined )  {
                // alert( "Aqui = " + JSON.stringify( data ) ); 
+               this.formID++;
                this.isDetalharOperacoesOn = !this.isDetalharOperacoesOn;
                this.buscaDetalhesOperacaoByID( data.id );
           }
@@ -161,10 +168,10 @@ export default
                 objeto: {   filtro: true  }
             }
         };
-        if ( this.filtroSelecionado == 'data' )       {
+        if ( this.filtroSelecionado == 'data' )                  {
              sendData.dados.objeto.data = '' + this.filtrosValues.dataOp;
              // console.log( "-- SEND data ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
-        } else if ( this.filtroSelecionado == 'id' )  {
+        } else if ( this.filtroSelecionado == 'id' )             {
              sendData.dados.objeto.id   = '' + this.filtrosValues.id;
              // console.log( "-- SEND id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
         }
@@ -219,7 +226,7 @@ export default
 
         axios.post( this.$SERVICES_ENDPOINT_URL , sendData )
               .then( response => {
-                    console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
+                     console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
                     // this.responseData = response.data; // 
                     // console.log( "Retorno type = " + typeof response.data );
                     this.responseOperacoesData = response.data; // -->>> Isso chama o watcher !

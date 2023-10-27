@@ -290,16 +290,16 @@ export default {
         id: data.id,
         action: update ? "update" : "cancel",
       };
-      console.log( "updated = " + this.rowUpdate );
+      //console.log( "updated = " + this.rowUpdate );
       this.modalIsVisible = true;
     },
     handleEdit(data) {
       this.rowUpdate = { edit: true, id: data.id };
-      console.log( "updated = " + this.rowUpdate );
+      //console.log( "updated = " + this.rowUpdate );
     },
     handleDelete(data) {
       this.rowUpdate = { id: data.id, action: "delete" };
-      console.log( "deleted = " + this.rowUpdate );
+      //console.log( "deleted = " + this.rowUpdate );
     }
   },
 };

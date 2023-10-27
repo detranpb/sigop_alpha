@@ -21,10 +21,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // Make BootstrapVue available throughout your project
 Vue.use( BootstrapVue )
 // Optionally install the BootstrapVue icon components plugin
-Vue.use(  IconsPlugin )
+Vue.use( IconsPlugin  )
 Vue.mixin({
   methods: {
-    helloWorld()            {
+    helloWorld()   {
         alert("Hello world");
     }
   }
@@ -33,8 +33,9 @@ Vue.mixin({
 // ---- Constantes da Aplicação ----
 Vue.prototype.$appName = 'My App'
 Vue.prototype.$TOTAL_AGENTES_POR_OPERACAO = 30 // TODO: IMPOR LIMITE !!!!!!
-// Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
-Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
+Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://184.72.238.232/policiamento/policiamento-services.php'
+
+// Vue.prototype.$SERVICES_ENDPOINT_URL = 'http://localhost/policiamento/policiamento-services.php'
 Vue.prototype.$IS_MOBILE_APP = ( document.documentElement.clientWidth < 620 ) ? true : false;	
 
 /* --------------------- FORT AWESOME ICONS -----------------------*/

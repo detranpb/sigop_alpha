@@ -99,7 +99,7 @@ export default
                     }
                 }; 
                 sendData.dados.objeto.id = this.idOperacao;
-                console.log( "-- SEND Busca Detalhas Operation id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
+                // console.log( "-- SEND Busca Detalhas Operation id ==||>> " + JSON.stringify( sendData ).replace( /\\/g, "" ) );
                 this.isDetalharOperacoesOn = true;
 
                 axios.post( this.$SERVICES_ENDPOINT_URL , sendData )

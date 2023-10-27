@@ -36,13 +36,13 @@ export default class ApiService              {
           };
           try         {
               // ----- var response = await SIGOP_API.post( sendData ); ----- 
-              console.log("-->> ENVIO ... ");
+              // console.log("-->> ENVIO ... ");
               var response = await axios.post( this.$SERVICES_ENDPOINT_URL, sendData );
 
-              console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
+              // console.log( "Resposta API = " +  JSON.stringify( response.data , null, 2 ) );
               var agentes = response.data; // -->>> Isso chama o watcher !
-              console.log( "- Envio... " );
-              console.log("Dados retornados = " +  this.responseData.dados );
+              // console.log( "- Envio... " );
+              // console.log("Dados retornados = " +  this.responseData.dados );
               // ---- console.log('-DATA == ' + JSON.stringify(  agentes ).replace( /\\/g, "" )  ); ---- 
                
               var agentesBD = agentes.data;
@@ -55,6 +55,6 @@ export default class ApiService              {
           }  catch ( error )  {
                 console.error(error);
           } 
-          console.log( "-- AGENTES = " + JSON.stringify( agentesLabelsVet ) );
+          // console.log( "-- AGENTES = " + JSON.stringify( agentesLabelsVet ) );
     } 
 }
